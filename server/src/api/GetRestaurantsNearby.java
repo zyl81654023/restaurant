@@ -24,9 +24,7 @@ public class GetRestaurantsNearby extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private static final DBConnection connection = new DBConnection();
 
-	/**
-	 * @see HttpServlet#HttpServlet()
-	 */
+
 	public GetRestaurantsNearby() {
 		super();
 	}
