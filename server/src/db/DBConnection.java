@@ -243,6 +243,7 @@ public class DBConnection {
 			}
 			
 			if (count < MIN_RECOMMENDED_RESTAURANTS) {
+				diff.clear();
 				allCategories.addAll(getMoreCategories(allCategories));
 				for (String category : allCategories) {
 					Set<String> set = getBusinessId(category);
