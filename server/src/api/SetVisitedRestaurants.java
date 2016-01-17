@@ -21,7 +21,7 @@ import db.DBConnection;
 /**
  * Servlet implementation class SetVisitedRestaurants
  */
-@WebServlet("/SetVisitedRestaurants")
+@WebServlet("/history")
 public class SetVisitedRestaurants extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private static final DBConnection connection = new DBConnection();

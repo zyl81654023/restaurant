@@ -19,7 +19,7 @@ import db.DBConnection;
 /**
  * Servlet implementation class GetRestaurantsNearby
  */
-@WebServlet(description = "Get Restaurants near a location with latitude and longitude", urlPatterns = { "/GetRestaurantsNearby" })
+@WebServlet(description = "Get Restaurants near a location with latitude and longitude", urlPatterns = { "/restaurants" })
 public class GetRestaurantsNearby extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private static final DBConnection connection = new DBConnection();

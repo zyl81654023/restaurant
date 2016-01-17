@@ -19,7 +19,7 @@ import db.DBConnection;
 /**
  * Servlet implementation class RecommendRestaurants
  */
-@WebServlet("/RecommendRestaurants")
+@WebServlet("/recommendation")
 public class RecommendRestaurants extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private static final DBConnection connection = new DBConnection();
