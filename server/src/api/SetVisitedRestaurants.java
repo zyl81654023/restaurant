@@ -1,8 +1,6 @@
 package api;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -44,37 +42,19 @@ public class SetVisitedRestaurants extends HttpServlet {
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		StringBuffer jb = new StringBuffer();
-		String line = null;
 		try {
-			BufferedReader reader = request.getReader();
-			while ((line = reader.readLine()) != null) {
-				jb.append(line);
-			}
-			reader.close();
-		} catch (Exception e) { /* report an error */
-		}
-
-		try {
-			
-			JSONObject input = new JSONObject(jb.toString());
+			JSONObject input = RpcParser.parseInput(request);
 			if (input.has("user_id") && input.has("visited")) {
-				String user_id = (String) input.get("user_id");
+				String userId = (String) input.get("user_id");
 				JSONArray array = (JSONArray) input.get("visited");
-				List<String> visited_list = new ArrayList<>(); 
+				List<String> visitedRestaurants = new ArrayList<>(); 
 				for (int i = 0; i < array.length(); i ++) {
-					String business_id = (String) array.get(i);
-					visited_list.add(business_id);
+					String businessId = (String) array.get(i);
+					visitedRestaurants.add(businessId);
 				}
-				connection.SetVisitedRestaurants(user_id, visited_list);
+				connection.SetVisitedRestaurants(userId, visitedRestaurants);
 			}
-
-			response.setContentType("application/json");
-			response.addHeader("Access-Control-Allow-Origin", "*");
-			PrintWriter out = response.getWriter();
-			out.print("ok");
-			out.flush();
-			out.close();
+			RpcParser.parseOutput(response, new JSONArray().put("ok"));
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
