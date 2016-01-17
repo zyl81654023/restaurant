@@ -10,10 +10,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import model.Restaurant;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import yelp.Restaurant;
 import yelp.YelpAPI;
 
 public class DBConnection {
@@ -69,7 +70,7 @@ public class DBConnection {
 				stmt.executeUpdate(sql);
 			}
 
-		} catch (Exception e) { /* report an error */
+		} catch (Exception e) {
 			System.out.println(e.getMessage());
 		}
 	}
@@ -92,14 +93,14 @@ public class DBConnection {
 		}
 	}
 
-	private Set<String> getCategories(String business_id) {
+	private Set<String> getCategories(String businessId) {
 		try {
 			if (conn == null) {
 				return null;
 			}
 			Statement stmt = conn.createStatement();
 			String sql = "SELECT categories from RESTAURANTS WHERE business_id='"
-					+ business_id + "'";
+					+ businessId + "'";
 			ResultSet rs = stmt.executeQuery(sql);
 			if (rs.next()) {
 				Set<String> set = new HashSet<>();
@@ -110,7 +111,7 @@ public class DBConnection {
 				}
 				return set;
 			}
-		} catch (Exception e) { /* report an error */
+		} catch (Exception e) {
 			System.out.println(e.getMessage());
 		}
 		return new HashSet<String>();
@@ -128,11 +129,10 @@ public class DBConnection {
 					+ category + "%'";
 			ResultSet rs = stmt.executeQuery(sql);
 			while (rs.next()) {
-				String business_id = rs.getString("business_id");
-				set.add(business_id);
+				String businessId = rs.getString("business_id");
+				set.add(businessId);
 			}
-			return set;
-		} catch (Exception e) { /* report an error */
+		} catch (Exception e) {
 			System.out.println(e.getMessage());
 		}
 		return set;
@@ -146,8 +146,8 @@ public class DBConnection {
 					+ userId;
 			ResultSet rs = stmt.executeQuery(sql);
 			while (rs.next()) {
-				String visited_restaurant = rs.getString("business_id");
-				visitedRestaurants.add(visited_restaurant);
+				String visitedRestaurant = rs.getString("business_id");
+				visitedRestaurants.add(visitedRestaurant);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -199,7 +199,6 @@ public class DBConnection {
 				allCategories.add(visited_restaurant);
 			}
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return allCategories;
@@ -231,10 +230,10 @@ public class DBConnection {
 			}
 			Set<JSONObject> diff = new HashSet<>();
 			int count = 0;
-			for (String business_id : allRestaurants) {
+			for (String businessId : allRestaurants) {
 				// Perform filtering
-				if (!visitedRestaurants.contains(business_id)) {
-					diff.add(getRestaurantsById(business_id));
+				if (!visitedRestaurants.contains(businessId)) {
+					diff.add(getRestaurantsById(businessId));
 					count++;
 					if (count >= MAX_RECOMMENDED_RESTAURANTS) {
 						break;
@@ -249,9 +248,9 @@ public class DBConnection {
 					Set<String> set = getBusinessId(category);
 					allRestaurants.addAll(set);
 				}
-				for (String business_id : allRestaurants) {
-					if (!visitedRestaurants.contains(business_id)) {
-						diff.add(getRestaurantsById(business_id));
+				for (String businessId : allRestaurants) {
+					if (!visitedRestaurants.contains(businessId)) {
+						diff.add(getRestaurantsById(businessId));
 						count++;
 						if (count >= MAX_RECOMMENDED_RESTAURANTS) {
 							break;
@@ -261,7 +260,7 @@ public class DBConnection {
 			}		
 			
 			return new JSONArray(diff);
-		} catch (Exception e) { /* report an error */
+		} catch (Exception e) {
 			System.out.println(e.getMessage());
 		}
 		return null;
@@ -291,7 +290,7 @@ public class DBConnection {
 				list.add(obj);
 			}
 			return new JSONArray(list);
-		} catch (Exception e) { /* report an error */
+		} catch (Exception e) {
 			System.out.println(e.getMessage());
 		}
 		return null;
@@ -344,7 +343,7 @@ public class DBConnection {
 				list.add(obj);
 			}
 			return new JSONArray(list);
-		} catch (Exception e) { /* report an error */
+		} catch (Exception e) {
 			System.out.println(e.getMessage());
 		}
 		return null;

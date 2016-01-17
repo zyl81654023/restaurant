@@ -1,8 +1,6 @@
 package api;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.PrintWriter;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -19,7 +17,7 @@ import db.DBConnection;
 /**
  * Servlet implementation class RecommendRestaurants
  */
-@WebServlet("/RecommendRestaurants")
+@WebServlet("/recommendation")
 public class RecommendRestaurants extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private static final DBConnection connection = new DBConnection();
@@ -42,30 +40,14 @@ public class RecommendRestaurants extends HttpServlet {
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		StringBuffer jb = new StringBuffer();
-		String line = null;
 		try {
-			BufferedReader reader = request.getReader();
-			while ((line = reader.readLine()) != null) {
-				jb.append(line);
-			}
-			reader.close();
-		} catch (Exception e) { /* report an error */
-		}
-
-		try {
-			JSONObject input = new JSONObject(jb.toString());
+			JSONObject input = RpcParser.parseInput(request);
 			JSONArray array = null;
 			if (input.has("user_id")) {
-				String user_id = (String) input.get("user_id");
-				array = connection.RecommendRestaurants(user_id);
+				String userId = (String) input.get("user_id");
+				array = connection.RecommendRestaurants(userId);
 			}
-			response.setContentType("application/json");
-			response.addHeader("Access-Control-Allow-Origin", "*");
-			PrintWriter out = response.getWriter();
-			out.print(array);
-			out.flush();
-			out.close();
+			RpcParser.parseOutput(response, array);
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}	

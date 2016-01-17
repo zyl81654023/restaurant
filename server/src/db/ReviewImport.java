@@ -12,9 +12,7 @@ public class ReviewImport {
 	static {
 		try {
 			Class.forName("com.mysql.jdbc.Driver").newInstance();
-			conn = DriverManager
-					.getConnection("jdbc:mysql://localhost:3306/mysql?"
-							+ "user=root&password=root");
+			conn = DriverManager.getConnection(DBConnection.URL);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -58,7 +56,7 @@ public class ReviewImport {
 				stmt.executeUpdate(sql);
 			}
 			reader.close();
-		} catch (Exception e) { /* report an error */
+		} catch (Exception e) {
 			System.out.println(e.getMessage());
 		}
 	}

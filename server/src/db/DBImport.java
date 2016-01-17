@@ -49,10 +49,7 @@ public class DBImport {
 			String line = null;
 
 			try {
-				// default password is "password"
-				conn = DriverManager
-						.getConnection("jdbc:mysql://localhost:3306/mysql?"
-								+ "user=root&password=root");
+				conn = DriverManager.getConnection(DBConnection.URL);
 			} catch (SQLException e) {
 				System.out.println("SQLException " + e.getMessage());
 				System.out.println("SQLState " + e.getSQLState());
@@ -169,7 +166,7 @@ public class DBImport {
 			*/
 			
 			System.out.println("Done Importing");
-		} catch (Exception e) { /* report an error */
+		} catch (Exception e) {
 			System.out.println(e.getMessage());
 		}
 	}
