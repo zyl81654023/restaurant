@@ -47,7 +47,6 @@ public class VisitHistory extends HttpServlet {
 				RpcParser.writeOutput(response, new JSONObject().put("status", "InvalidParameter"));
 			}
 		} catch (JSONException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
