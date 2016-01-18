@@ -31,8 +31,6 @@ public class GetRestaurantsNearby extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
-		response.setContentType("application/json");
-		response.addHeader("Access-Control-Allow-Origin", "*");
 		JSONArray array = null;
 		if (request.getParameterMap().containsKey("user_id") &&
 				request.getParameterMap().containsKey("lat") &&

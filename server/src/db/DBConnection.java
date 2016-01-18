@@ -3,7 +3,6 @@ package db;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -170,6 +169,7 @@ public class DBConnection {
 		}
 		return null;
 	}
+	
 	/*
 	private Set<String> getMoreCategories(String category, int maxCount) {
 		Set<String> allCategories = new HashSet<>();
@@ -230,6 +230,7 @@ public class DBConnection {
 				}
 			}
 			/*
+			// offline learning
 			if (count < MIN_RECOMMENDED_RESTAURANTS) {
 				diff.clear();
 				allCategories.addAll(getMoreCategories(allCategories));
