@@ -12,7 +12,7 @@ public class ReviewImport {
 	static {
 		try {
 			Class.forName("com.mysql.jdbc.Driver").newInstance();
-			conn = DriverManager.getConnection(DBConnection.URL);
+			conn = DriverManager.getConnection(DBUtil.URL);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

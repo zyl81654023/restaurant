@@ -14,10 +14,14 @@ public class YelpAPI {
 	private static final String DEFAULT_TERM = "dinner";
 	private static final int SEARCH_LIMIT = 20;
 	private static final String SEARCH_PATH = "/v2/search";
-	private static final String CONSUMER_KEY = "YOUR_CONSUMER_KEY";
-	private static final String CONSUMER_SECRET = "YOUR_CONSUMER_SECRET";
-	private static final String TOKEN = "YOUR_TOKEN";
-	private static final String TOKEN_SECRET = "YOUR_TOKEN_SECRET";
+//	private static final String CONSUMER_KEY = "YOUR_CONSUMER_KEY";
+//	private static final String CONSUMER_SECRET = "YOUR_CONSUMER_SECRET";
+//	private static final String TOKEN = "YOUR_TOKEN";
+//	private static final String TOKEN_SECRET = "YOUR_TOKEN_SECRET";
+	private static final String CONSUMER_KEY = "8BigM_R2R-9Qxmnm7c-QGQ";
+	private static final String CONSUMER_SECRET = "pw0TvgbIMd5XAIg8LFgROTCJ8SI";
+	private static final String TOKEN = "aAogbuqODoQODVlYug87-1w9u8OpxCGO";
+	private static final String TOKEN_SECRET = "CwBmbx8yS-4kv34ufETntuh4IJ8";
 
 	OAuthService service;
 	Token accessToken;
@@ -67,7 +71,6 @@ public class YelpAPI {
 			for (int i = 0; i < businesses.length(); i++) {
 				JSONObject business = (JSONObject) businesses.get(i);
 				String businessID = business.get("id").toString();
-				System.out.println("BusinessId: " + businessID);
 				System.out.println(business);
 			}
 		} catch (Exception e) {

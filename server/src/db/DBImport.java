@@ -24,7 +24,7 @@ public class DBImport {
 				String obj = (String) array.get(i);
 				sb.append(obj);
 				if (i != array.length() - 1) {
-					sb.append(",");
+					sb.append(", ");
 				}
 			}
 		} catch (JSONException e) {
@@ -35,7 +35,7 @@ public class DBImport {
 
 	public static JSONArray stringToJSONArray(String str) {
 		try {
-			return new JSONArray("[" + str + "]");
+			return new JSONArray(str.split(","));
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
@@ -49,7 +49,7 @@ public class DBImport {
 			String line = null;
 
 			try {
-				conn = DriverManager.getConnection(DBConnection.URL);
+				conn = DriverManager.getConnection(DBUtil.URL);
 			} catch (SQLException e) {
 				System.out.println("SQLException " + e.getMessage());
 				System.out.println("SQLState " + e.getSQLState());
@@ -68,14 +68,7 @@ public class DBImport {
 			
 			sql = "DROP TABLE IF EXISTS USERS";
 			stmt.executeUpdate(sql);
-			
-			sql = "DROP TABLE IF EXISTS USER_REVIEW_HISTORY";
-			stmt.executeUpdate(sql);
-			
-			sql = "DROP TABLE IF EXISTS USER_CATEGORY_HISTORY";
-			stmt.executeUpdate(sql);
-			
-			
+
 			//Step 2: create tables
 			sql = "CREATE TABLE RESTAURANTS "
 					+ "(business_id VARCHAR(255) NOT NULL, "
@@ -83,7 +76,7 @@ public class DBImport {
 					+ "city VARCHAR(255), " + "state VARCHAR(255), "
 					+ "stars FLOAT," + "full_address VARCHAR(255), "
 					+ "latitude FLOAT, " + " longitude FLOAT, "
-					+ "image_url VARCHAR(255), "
+					+ "image_url VARCHAR(255), " + "url VARCHAR(255), "
 					+ " PRIMARY KEY ( business_id ))";
 			stmt.executeUpdate(sql);
 						
@@ -102,22 +95,7 @@ public class DBImport {
 					+ "FOREIGN KEY (business_id) REFERENCES RESTAURANTS(business_id),"
 					+ "FOREIGN KEY (user_id) REFERENCES users(user_id))";
 			stmt.executeUpdate(sql);
-			
-			sql = "CREATE TABLE USER_REVIEW_HISTORY "
-					+ "(visit_review_id bigint(20) unsigned NOT NULL AUTO_INCREMENT, "
-					+ " user_id VARCHAR(255) NOT NULL , "
-					+ " business_id VARCHAR(255) NOT NULL, " 
-					+ " PRIMARY KEY (visit_review_id))";
-			stmt.executeUpdate(sql);
-			
-			sql = "CREATE TABLE USER_CATEGORY_HISTORY "
-					+ "(category_id bigint(20) unsigned NOT NULL AUTO_INCREMENT, "
-					+ " first_id VARCHAR(255) NOT NULL , "
-					+ " second_id VARCHAR(255) NOT NULL, "
-					+ " count bigint(20) NOT NULL, "
-					+ " PRIMARY KEY (category_id))";
-			stmt.executeUpdate(sql);
-			
+
 			//Step 3: insert data
 			BufferedReader reader = new BufferedReader(new FileReader(
 					"../dataset/yelp_academic_dataset_business.json"));
@@ -135,12 +113,12 @@ public class DBImport {
 				double latitude = restaurant.getDouble("latitude");
 				double longitude = restaurant.getDouble("longitude");
 				String imageUrl = "http://www.example.com/img.JPG";
+				String url = "http://www.yelp.com";
 				sql = "INSERT INTO RESTAURANTS " + "VALUES ('" + business_id
-						+ "', \"" + name + "\", \"" + categories + "\", '"
-						+ city + "', '" + state + "', " + stars + ", \""
-						+ fullAddress + "\", " + latitude + "," + longitude
-						+ ", \"" +imageUrl + "\""
-						+ ")";
+						+ "', '" + name + "', '" + categories + "', '"
+						+ city + "', '" + state + "', " + stars + ", '"
+						+ fullAddress + "', " + latitude + "," + longitude
+						+ ", '" +imageUrl + "', '" + url + "')";
 				System.out.println(sql);
 				stmt.executeUpdate(sql);
 			}
@@ -148,23 +126,7 @@ public class DBImport {
 			
 			sql = "INSERT INTO USERS " + "VALUES (\"1111\", \"John\", \"Smith\")";
 			stmt.executeUpdate(sql);
-			
-			//Optional to create category history (takes much time)
-			/*
-			reader = new BufferedReader(new FileReader(
-					"../dataset/yelp_academic_dataset_review.json"));	
 
-			while ((line = reader.readLine()) != null) {
-				JSONObject review = new JSONObject(line);
-				String business_id = review.getString("business_id");
-				String user_id = review.getString("user_id");
-				sql = "INSERT INTO USER_REVIEW_HISTORY (`user_id`, `business_id`)" + "VALUES (\"" + user_id
-						+ "\", \"" + business_id + "\")";
-				System.out.println(sql);
-				stmt.executeUpdate(sql);
-			}
-			*/
-			
 			System.out.println("Done Importing");
 		} catch (Exception e) {
 			System.out.println(e.getMessage());

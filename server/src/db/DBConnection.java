@@ -21,27 +21,15 @@ public class DBConnection {
 	private Connection conn = null;
 	private static final int MAX_RECOMMENDED_RESTAURANTS = 10;
 	private static final int MIN_RECOMMENDED_RESTAURANTS = 3;
-	/**
-	 * Make sure it is the only place to configure db related parameters
-	 */
-	public static final String HOSTNAME = "localhost";
-	public static final String PORT = "3306";
-	public static final String DBNAME = "laiproject";
-	public static final String USERNAME = "root";
-	public static final String PASSWORD = "root";
-	public static final String URL;
-		
-	static {
-		URL = "jdbc:mysql://" + HOSTNAME + ":" + PORT + "/" + DBNAME
-				+ "?user=" + USERNAME +"&password=" + PASSWORD;
-	}
 	
 	public DBConnection() {
-		this(URL);
+		this(DBUtil.URL);
 	}
 
 	public DBConnection(String url) {
 		try {
+			//Forcing the class representing the MySQL driver to load and initialize.
+			// The newInstance() call is a work around for some broken Java implementations
 			Class.forName("com.mysql.jdbc.Driver").newInstance();
 			conn = DriverManager.getConnection(url);
 		} catch (Exception e) {
@@ -158,7 +146,7 @@ public class DBConnection {
 	private JSONObject getRestaurantsById(String businessId) {
 		try {
 			Statement stmt = conn.createStatement();
-			String sql = "SELECT business_id, name, full_address, categories, stars, latitude, longitude, city, state, image_url from "
+			String sql = "SELECT * from "
 					+ "RESTAURANTS where business_id='" + businessId + "'" + " ORDER BY stars DESC";
 			ResultSet rs = stmt.executeQuery(sql);
 			if (rs.next()) {
@@ -174,6 +162,7 @@ public class DBConnection {
 				obj.put("categories",
 						DBImport.stringToJSONArray(rs.getString("categories")));
 				obj.put("image_url", rs.getString("image_url"));
+				obj.put("url", rs.getString("url"));
 				return obj;
 			}
 		} catch (Exception e) { /* report an error */
@@ -181,7 +170,7 @@ public class DBConnection {
 		}
 		return null;
 	}
-	
+	/*
 	private Set<String> getMoreCategories(String category, int maxCount) {
 		Set<String> allCategories = new HashSet<>();
 		if (conn == null) {
@@ -210,7 +199,7 @@ public class DBConnection {
 			allCategories.addAll(getMoreCategories(category, 5));
 		}
 		return allCategories;
-	}
+	}*/
 
 	public JSONArray RecommendRestaurants(String userId) {
 		try {
@@ -240,7 +229,7 @@ public class DBConnection {
 					}
 				}
 			}
-			
+			/*
 			if (count < MIN_RECOMMENDED_RESTAURANTS) {
 				diff.clear();
 				allCategories.addAll(getMoreCategories(allCategories));
@@ -257,7 +246,7 @@ public class DBConnection {
 						}
 					}
 				}
-			}		
+			}*/	
 			
 			return new JSONArray(diff);
 		} catch (Exception e) {
@@ -266,13 +255,14 @@ public class DBConnection {
 		return null;
 	}
 
-	public JSONArray GetRestaurantsNearLoation(double lat, double lon) {
+	public JSONArray GetRestaurantsNearLoation(String userId, double lat, double lon) {
 		try {
 			if (conn == null) {
 				return null;
 			}
+			Set<String> visited = getVisitedRestaurants(userId);
 			Statement stmt = conn.createStatement();
-			String sql = "SELECT business_id, name, full_address, categories, stars, latitude, longitude, city, state from RESTAURANTS LIMIT 10";
+			String sql = "SELECT * from RESTAURANTS LIMIT 10";
 			ResultSet rs = stmt.executeQuery(sql);
 			List<JSONObject> list = new ArrayList<JSONObject>();
 			while (rs.next()) {
@@ -287,6 +277,13 @@ public class DBConnection {
 				obj.put("state", rs.getString("state"));
 				obj.put("categories",
 						DBImport.stringToJSONArray(rs.getString("categories")));
+				obj.put("image_url", rs.getString("image_url"));
+				obj.put("url", rs.getString("url"));
+				if (visited.contains(rs.getString("business_id"))){
+					obj.put("is_visited", true);
+				} else {
+					obj.put("is_visited", false);
+				}
 				list.add(obj);
 			}
 			return new JSONArray(list);
@@ -296,7 +293,7 @@ public class DBConnection {
 		return null;
 	}
 
-	public JSONArray GetRestaurantsNearLoationViaYelpAPI(double lat, double lon) {
+	public JSONArray GetRestaurantsNearLoationViaYelpAPI(String userId, double lat, double lon) {
 		try {
 			YelpAPI api = new YelpAPI();
 			JSONObject response = new JSONObject(
@@ -308,6 +305,7 @@ public class DBConnection {
 			Statement stmt = conn.createStatement();
 			String sql = "";
 			List<JSONObject> list = new ArrayList<JSONObject>();
+			Set<String> visited = getVisitedRestaurants(userId);
 
 			for (int i = 0; i < array.length(); i++) {
 				JSONObject object = array.getJSONObject(i);
@@ -322,6 +320,7 @@ public class DBConnection {
 				double latitude = restaurant.getLatitude();
 				double longitude = restaurant.getLongitude();
 				String imageUrl = restaurant.getImageUrl();
+				String url = restaurant.getUrl();
 				JSONObject obj = new JSONObject();
 				obj.put("business_id", business_id);
 				obj.put("name", name);
@@ -333,11 +332,17 @@ public class DBConnection {
 				obj.put("state", state);
 				obj.put("categories", categories);
 				obj.put("image_url", imageUrl);
+				obj.put("url", url);
+				if (visited.contains(business_id)){
+					obj.put("is_visited", true);
+				} else {
+					obj.put("is_visited", false);
+				}
 				sql = "INSERT IGNORE INTO RESTAURANTS " + "VALUES ('"
 						+ business_id + "', \"" + name + "\", \"" + categories
-						+ "\", '" + city + "', '" + state + "', " + stars
+						+ "\", \"" + city + "\", \"" + state + "\", " + stars
 						+ ", \"" + fullAddress + "\", " + latitude + ","
-						+ longitude + ",\"" + imageUrl + "\")";
+						+ longitude + ",\"" + imageUrl + "\", \"" + url + "\")";
 				System.out.println(sql);
 				stmt.executeUpdate(sql);
 				list.add(obj);
@@ -351,7 +356,7 @@ public class DBConnection {
 	
 	public static void main(String[] args) {
 		//This is for test purpose
-		DBConnection conn = new DBConnection("jdbc:mysql://localhost:3306/mysql?user=root&password=root");
-		JSONArray array = conn.GetRestaurantsNearLoationViaYelpAPI(1.0, 2.0);
+		DBConnection conn = new DBConnection();
+		JSONArray array = conn.GetRestaurantsNearLoationViaYelpAPI("1111", 37.38, -122.08);
 	}
 }

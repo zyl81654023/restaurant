@@ -28,8 +28,21 @@ public class RpcParser {
 		}
 		return null;
 	}
+
+	public static void writeOutput(HttpServletResponse response, JSONObject obj) {
+		try {			
+			response.setContentType("application/json");
+			response.addHeader("Access-Control-Allow-Origin", "*");
+			PrintWriter out = response.getWriter();
+			out.print(obj);
+			out.flush();
+			out.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}	
+	}
 	
-	public static void parseOutput(HttpServletResponse response, JSONArray array) {
+	public static void writeOutput(HttpServletResponse response, JSONArray array) {
 		try {			
 			response.setContentType("application/json");
 			response.addHeader("Access-Control-Allow-Origin", "*");

@@ -45,8 +45,8 @@ public class DBYelpImport {
 			Connection conn = null;
 
 			try {
-				System.out.println("Connecting to \n" + DBConnection.URL);
-				conn = DriverManager.getConnection(DBConnection.URL);
+				System.out.println("Connecting to \n" + DBUtil.URL);
+				conn = DriverManager.getConnection(DBUtil.URL);
 			} catch (SQLException e) {
 				System.out.println("SQLException " + e.getMessage());
 				System.out.println("SQLState " + e.getSQLState());

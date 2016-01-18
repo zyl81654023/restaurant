@@ -13,9 +13,7 @@ public class DBExport {
 	static {
 		try {
 			Class.forName("com.mysql.jdbc.Driver").newInstance();
-			conn = DriverManager
-					.getConnection("jdbc:mysql://localhost:3306/mysql?"
-							+ "user=root&password=root");
+			conn = DriverManager.getConnection(DBUtil.URL);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

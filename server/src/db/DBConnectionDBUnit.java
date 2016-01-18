@@ -97,7 +97,7 @@ public class DBConnectionDBUnit extends DatabaseTestCase{
 	public void testGetRestaurantsNearLoation() throws Exception {
 		DBConnection dbconn = new DBConnection(
 				"jdbc:mysql://localhost:3306/unittest?user=root&password=root");
-		JSONArray restaurants = dbconn.GetRestaurantsNearLoation(30.0, 20.0);
+		JSONArray restaurants = dbconn.GetRestaurantsNearLoation("1111", 30.0, 20.0);
 		Set<String> nearby_businessids = new HashSet<>();
         int length = restaurants.length();
         for(int i = 0; i < length; i++){
