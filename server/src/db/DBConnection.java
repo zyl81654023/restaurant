@@ -52,7 +52,7 @@ public class DBConnection {
 			Statement stmt = conn.createStatement();
 			String sql = "";
 			for (String businessId : businessIds) {
-				sql = "INSERT INTO USER_VISIT_HISTORY (`user_id`, `business_id`) VALUES (\""
+				sql = "INSERT INTO history (`user_id`, `business_id`) VALUES (\""
 						+ userId + "\", \"" + businessId + "\")";
 				stmt.executeUpdate(sql);
 			}
@@ -70,7 +70,7 @@ public class DBConnection {
 			Statement stmt = conn.createStatement();
 			String sql = "";
 			for (String businessId : businessIds) {
-				sql = "DELETE FROM USER_VISIT_HISTORY WHERE `user_id`=\"" + userId + "\" and `business_id` = \""
+				sql = "DELETE FROM history WHERE `user_id`=\"" + userId + "\" and `business_id` = \""
 						+ businessId + "\"";
 				stmt.executeUpdate(sql);
 			}
@@ -86,7 +86,7 @@ public class DBConnection {
 				return null;
 			}
 			Statement stmt = conn.createStatement();
-			String sql = "SELECT categories from RESTAURANTS WHERE business_id='"
+			String sql = "SELECT categories from restaurants WHERE business_id='"
 					+ businessId + "'";
 			ResultSet rs = stmt.executeQuery(sql);
 			if (rs.next()) {
@@ -112,7 +112,7 @@ public class DBConnection {
 			}
 			Statement stmt = conn.createStatement();
 			// if category = Chinese, categories = Chinese, Korean, Japanese, it's a match
-			String sql = "SELECT business_id from RESTAURANTS WHERE categories LIKE '%"
+			String sql = "SELECT business_id from restaurants WHERE categories LIKE '%"
 					+ category + "%'";
 			ResultSet rs = stmt.executeQuery(sql);
 			while (rs.next()) {
@@ -129,7 +129,7 @@ public class DBConnection {
 		Set<String> visitedRestaurants = new HashSet<String>();
 		try {
 			Statement stmt = conn.createStatement();
-			String sql = "SELECT business_id from USER_VISIT_HISTORY WHERE user_id="
+			String sql = "SELECT business_id from history WHERE user_id="
 					+ userId;
 			ResultSet rs = stmt.executeQuery(sql);
 			while (rs.next()) {
@@ -146,7 +146,7 @@ public class DBConnection {
 		try {
 			Statement stmt = conn.createStatement();
 			String sql = "SELECT * from "
-					+ "RESTAURANTS where business_id='" + businessId + "'" + " ORDER BY stars DESC";
+					+ "restaurants where business_id='" + businessId + "'" + " ORDER BY stars DESC";
 			ResultSet rs = stmt.executeQuery(sql);
 			if (rs.next()) {
 				JSONObject obj = new JSONObject();
@@ -263,7 +263,7 @@ public class DBConnection {
 			}
 			Set<String> visited = getVisitedRestaurants(userId);
 			Statement stmt = conn.createStatement();
-			String sql = "SELECT * from RESTAURANTS LIMIT 10";
+			String sql = "SELECT * from restaurants LIMIT 10";
 			ResultSet rs = stmt.executeQuery(sql);
 			List<JSONObject> list = new ArrayList<JSONObject>();
 			while (rs.next()) {
@@ -328,7 +328,7 @@ public class DBConnection {
 				} else {
 					obj.put("is_visited", false);
 				}
-				sql = "INSERT IGNORE INTO RESTAURANTS " + "VALUES ('"
+				sql = "INSERT IGNORE INTO restaurants " + "VALUES ('"
 						+ businessId + "', \"" + name + "\", \"" + categories
 						+ "\", \"" + city + "\", \"" + state + "\", " + stars
 						+ ", \"" + fullAddress + "\", " + latitude + ","
