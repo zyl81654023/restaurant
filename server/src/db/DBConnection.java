@@ -311,7 +311,7 @@ public class DBConnection {
 			for (int i = 0; i < array.length(); i++) {
 				JSONObject object = array.getJSONObject(i);
 				Restaurant restaurant = new Restaurant(object);
-				String business_id = restaurant.getBusinessId();
+				String businessId = restaurant.getBusinessId();
 				String name = restaurant.getName();
 				String categories = restaurant.getCategories();
 				String city = restaurant.getCity();
@@ -322,25 +322,14 @@ public class DBConnection {
 				double longitude = restaurant.getLongitude();
 				String imageUrl = restaurant.getImageUrl();
 				String url = restaurant.getUrl();
-				JSONObject obj = new JSONObject();
-				obj.put("business_id", business_id);
-				obj.put("name", name);
-				obj.put("stars", stars);
-				obj.put("latitude", latitude);
-				obj.put("longitude", longitude);
-				obj.put("full_address", fullAddress);
-				obj.put("city", city);
-				obj.put("state", state);
-				obj.put("categories", categories);
-				obj.put("image_url", imageUrl);
-				obj.put("url", url);
-				if (visited.contains(business_id)){
+				JSONObject obj = restaurant.toJSONObject();
+				if (visited.contains(businessId)){
 					obj.put("is_visited", true);
 				} else {
 					obj.put("is_visited", false);
 				}
 				sql = "INSERT IGNORE INTO RESTAURANTS " + "VALUES ('"
-						+ business_id + "', \"" + name + "\", \"" + categories
+						+ businessId + "', \"" + name + "\", \"" + categories
 						+ "\", \"" + city + "\", \"" + state + "\", " + stars
 						+ ", \"" + fullAddress + "\", " + latitude + ","
 						+ longitude + ",\"" + imageUrl + "\", \"" + url + "\")";

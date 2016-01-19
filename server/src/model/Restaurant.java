@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import db.DBImport;
@@ -27,15 +28,15 @@ public class Restaurant {
 				this.businessId = object.getString("id");
 				JSONArray jsonArray = (JSONArray) object.get("categories");
 				List<String> list = new ArrayList<String>();
-				for (int i=0; i<jsonArray.length(); i++) {
+				for (int i = 0; i < jsonArray.length(); i++) {
 					JSONArray subArray = jsonArray.getJSONArray(i);
-					for (int j=0; j<subArray.length(); j++) {
-				        list.add( subArray.getString(j) );
+					for (int j = 0; j < subArray.length(); j++) {
+						list.add(subArray.getString(j));
 					}
 				}
 				this.categories = String.join(",", list);
 				this.name = object.getString("name");
-				this.imageUrl = object.getString("image_url");//either image_url (big) or mobile_url(small)
+				this.imageUrl = object.getString("image_url");
 				this.stars = object.getDouble("rating");
 				JSONObject location = (JSONObject) object.get("location");
 				JSONObject coordinate = (JSONObject) location.get("coordinate");
@@ -43,7 +44,9 @@ public class Restaurant {
 				this.longitude = coordinate.getDouble("longitude");
 				this.city = location.getString("city");
 				this.state = location.getString("state_code");
-				this.fullAddress = DBImport.jsonArrayToString((JSONArray) location.get("display_address"));
+				this.fullAddress = DBImport
+						.jsonArrayToString((JSONArray) location
+								.get("display_address"));
 				this.url = object.getString("url");
 			}
 		} catch (Exception e) {
@@ -65,6 +68,26 @@ public class Restaurant {
 		this.latitude = latitude;
 		this.longitude = longitude;
 		this.url = url;
+	}
+	
+	public JSONObject toJSONObject() {
+		JSONObject obj = new JSONObject();
+		try {
+			obj.put("business_id", businessId);
+			obj.put("name", name);
+			obj.put("stars", stars);
+			obj.put("latitude", latitude);
+			obj.put("longitude", longitude);
+			obj.put("full_address", fullAddress);
+			obj.put("city", city);
+			obj.put("state", state);
+			obj.put("categories", categories);
+			obj.put("image_url", imageUrl);
+			obj.put("url", url);
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		return obj;
 	}
 
 	public String getBusinessId() {
