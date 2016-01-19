@@ -25,7 +25,7 @@ public class DBExport {
 				return;
 			}
 			Statement stmt = conn.createStatement();
-			String sql = "SELECT categories FROM RESTAURANTS AS T1 JOIN USER_REVIEW_HISTORY AS T2 ON T1.business_id = T2.business_id;";
+			String sql = "SELECT categories FROM restaurants AS T1 JOIN history AS T2 ON T1.business_id = T2.business_id;";
 			ResultSet rs = stmt.executeQuery(sql);
 			BufferedWriter writer = new BufferedWriter(new FileWriter(
 					"../dataset/review_data"));

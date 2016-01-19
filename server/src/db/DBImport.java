@@ -60,17 +60,17 @@ public class DBImport {
 			}
 			//Step 1 Drop tables. 
 			Statement stmt = conn.createStatement();
-			String sql = "DROP TABLE IF EXISTS USER_VISIT_HISTORY";
+			String sql = "DROP TABLE IF EXISTS history";
 			stmt.executeUpdate(sql);
 			
-			sql = "DROP TABLE IF EXISTS RESTAURANTS";
+			sql = "DROP TABLE IF EXISTS restaurants";
 			stmt.executeUpdate(sql);
 			
-			sql = "DROP TABLE IF EXISTS USERS";
+			sql = "DROP TABLE IF EXISTS users";
 			stmt.executeUpdate(sql);
 
 			//Step 2: create tables
-			sql = "CREATE TABLE RESTAURANTS "
+			sql = "CREATE TABLE restaurants "
 					+ "(business_id VARCHAR(255) NOT NULL, "
 					+ " name VARCHAR(255), " + "categories VARCHAR(255), "
 					+ "city VARCHAR(255), " + "state VARCHAR(255), "
@@ -80,19 +80,19 @@ public class DBImport {
 					+ " PRIMARY KEY ( business_id ))";
 			stmt.executeUpdate(sql);
 						
-			sql = "CREATE TABLE USERS "
+			sql = "CREATE TABLE users "
 					+ "(user_id VARCHAR(255) NOT NULL, "
 					+ " first_name VARCHAR(255), last_name VARCHAR(255), "
 					+ " PRIMARY KEY ( user_id ))";
 			stmt.executeUpdate(sql);
 			
-			sql = "CREATE TABLE USER_VISIT_HISTORY "
+			sql = "CREATE TABLE history "
 					+ "(visit_history_id bigint(20) unsigned NOT NULL AUTO_INCREMENT, "
 					+ " user_id VARCHAR(255) NOT NULL , "
 					+ " business_id VARCHAR(255) NOT NULL, " 
 					+ " last_visited_time timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP, "
 					+ " PRIMARY KEY (visit_history_id),"
-					+ "FOREIGN KEY (business_id) REFERENCES RESTAURANTS(business_id),"
+					+ "FOREIGN KEY (business_id) REFERENCES restaurants(business_id),"
 					+ "FOREIGN KEY (user_id) REFERENCES users(user_id))";
 			stmt.executeUpdate(sql);
 
@@ -114,7 +114,7 @@ public class DBImport {
 				double longitude = restaurant.getDouble("longitude");
 				String imageUrl = "http://www.example.com/img.JPG";
 				String url = "http://www.yelp.com";
-				sql = "INSERT INTO RESTAURANTS " + "VALUES ('" + business_id
+				sql = "INSERT INTO restaurants " + "VALUES ('" + business_id
 						+ "', '" + name + "', '" + categories + "', '"
 						+ city + "', '" + state + "', " + stars + ", '"
 						+ fullAddress + "', " + latitude + "," + longitude
@@ -124,7 +124,7 @@ public class DBImport {
 			}
 			reader.close();
 			
-			sql = "INSERT INTO USERS " + "VALUES (\"1111\", \"John\", \"Smith\")";
+			sql = "INSERT INTO users " + "VALUES (\"1111\", \"John\", \"Smith\")";
 			stmt.executeUpdate(sql);
 
 			System.out.println("Done Importing");
