@@ -69,6 +69,7 @@ public class DBYelpImport {
 					+ "stars FLOAT," + "full_address VARCHAR(255), "
 					+ "latitude FLOAT, " + " longitude FLOAT, "
 					+ "image_url VARCHAR(255),"
+					+ "url VARCHAR(255),"
 					+ " PRIMARY KEY ( business_id ))";
 			stmt.executeUpdate(sql);
 
