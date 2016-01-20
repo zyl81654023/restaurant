@@ -38,7 +38,7 @@ public class GetRestaurantsNearby extends HttpServlet {
 			String userId = request.getParameter("user_id");
 			double lat = Double.parseDouble(request.getParameter("lat"));
 			double lon = Double.parseDouble(request.getParameter("lon"));
-			array = connection.GetRestaurantsNearLoationViaYelpAPI(userId, lat, lon);
+			array = connection.SearchRestaurants(userId, lat, lon);
 			//array = connection.GetRestaurantsNearLoation(userId, lat, lon);
 		}
 		RpcParser.writeOutput(response, array);

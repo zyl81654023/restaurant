@@ -291,7 +291,7 @@ public class DBConnection {
 	}
 	*/
 
-	public JSONArray GetRestaurantsNearLoationViaYelpAPI(String userId, double lat, double lon) {
+	public JSONArray SearchRestaurants(String userId, double lat, double lon) {
 		try {
 			YelpAPI api = new YelpAPI();
 			JSONObject response = new JSONObject(
@@ -338,6 +338,6 @@ public class DBConnection {
 	public static void main(String[] args) {
 		//This is for test purpose
 		DBConnection conn = new DBConnection();
-		JSONArray array = conn.GetRestaurantsNearLoationViaYelpAPI("1111", 37.38, -122.08);
+		JSONArray array = conn.SearchRestaurants("1111", 37.38, -122.08);
 	}
 }
