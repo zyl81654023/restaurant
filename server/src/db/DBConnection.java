@@ -43,52 +43,53 @@ public class DBConnection {
 	        } catch (Exception e) { /* ignored */}
 	    }
 	}
+	
+	private void executeUpdateStatement(String query) {
+        if (conn == null) {
+            return;
+        }
+        try {
+            Statement stmt = conn.createStatement();
+            System.out.println("\nDBConnection executing query:\n" + query);
+            stmt.executeUpdate(query);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+	
+	private ResultSet executeFetchStatement(String query) {
+        if (conn == null) {
+            return null;
+        }
+        try {
+            Statement stmt = conn.createStatement();
+            System.out.println("\nDBConnection executing query:\n" + query);
+            return stmt.executeQuery(query);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+		return null;
+    }
 
 	public void SetVisitedRestaurants(String userId, List<String> businessIds) {
-		try {
-			if (conn == null) {
-				return;
-			}
-			Statement stmt = conn.createStatement();
-			String sql = "";
-			for (String businessId : businessIds) {
-				sql = "INSERT INTO history (`user_id`, `business_id`) VALUES (\""
-						+ userId + "\", \"" + businessId + "\")";
-				stmt.executeUpdate(sql);
-			}
-
-		} catch (Exception e) {
-			System.out.println(e.getMessage());
+		for (String businessId : businessIds) {
+			executeUpdateStatement("INSERT INTO history (`user_id`, `business_id`) VALUES (\""
+					+ userId + "\", \"" + businessId + "\")");
 		}
 	}
 
 	public void UnsetVisitedRestaurants(String userId, List<String> businessIds) {
-		try {
-			if (conn == null) {
-				return;
-			}
-			Statement stmt = conn.createStatement();
-			String sql = "";
-			for (String businessId : businessIds) {
-				sql = "DELETE FROM history WHERE `user_id`=\"" + userId + "\" and `business_id` = \""
-						+ businessId + "\"";
-				stmt.executeUpdate(sql);
-			}
-
-		} catch (Exception e) { /* report an error */
-			System.out.println(e.getMessage());
+		for (String businessId : businessIds) {
+			executeUpdateStatement("DELETE FROM history WHERE `user_id`=\""
+					+ userId + "\" and `business_id` = \"" + businessId + "\"");
 		}
 	}
 
 	private Set<String> getCategories(String businessId) {
 		try {
-			if (conn == null) {
-				return null;
-			}
-			Statement stmt = conn.createStatement();
 			String sql = "SELECT categories from restaurants WHERE business_id='"
 					+ businessId + "'";
-			ResultSet rs = stmt.executeQuery(sql);
+			ResultSet rs = executeFetchStatement(sql);
 			if (rs.next()) {
 				Set<String> set = new HashSet<>();
 				String[] categories = rs.getString("categories").split(",");
@@ -107,14 +108,10 @@ public class DBConnection {
 	private Set<String> getBusinessId(String category) {
 		Set<String> set = new HashSet<>();
 		try {
-			if (conn == null) {
-				return null;
-			}
-			Statement stmt = conn.createStatement();
 			// if category = Chinese, categories = Chinese, Korean, Japanese, it's a match
 			String sql = "SELECT business_id from restaurants WHERE categories LIKE '%"
 					+ category + "%'";
-			ResultSet rs = stmt.executeQuery(sql);
+			ResultSet rs = executeFetchStatement(sql);
 			while (rs.next()) {
 				String businessId = rs.getString("business_id");
 				set.add(businessId);
@@ -128,10 +125,9 @@ public class DBConnection {
 	public Set<String> getVisitedRestaurants(String userId) {
 		Set<String> visitedRestaurants = new HashSet<String>();
 		try {
-			Statement stmt = conn.createStatement();
 			String sql = "SELECT business_id from history WHERE user_id="
 					+ userId;
-			ResultSet rs = stmt.executeQuery(sql);
+			ResultSet rs = executeFetchStatement(sql);
 			while (rs.next()) {
 				String visitedRestaurant = rs.getString("business_id");
 				visitedRestaurants.add(visitedRestaurant);
@@ -144,10 +140,9 @@ public class DBConnection {
 
 	private JSONObject getRestaurantsById(String businessId) {
 		try {
-			Statement stmt = conn.createStatement();
 			String sql = "SELECT * from "
 					+ "restaurants where business_id='" + businessId + "'" + " ORDER BY stars DESC";
-			ResultSet rs = stmt.executeQuery(sql);
+			ResultSet rs = executeFetchStatement(sql);
 			if (rs.next()) {
 				JSONObject obj = new JSONObject();
 				obj.put("business_id", rs.getString("business_id"));
@@ -256,6 +251,7 @@ public class DBConnection {
 		return null;
 	}
 
+	/*
 	public JSONArray GetRestaurantsNearLoation(String userId, double lat, double lon) {
 		try {
 			if (conn == null) {
@@ -293,18 +289,15 @@ public class DBConnection {
 		}
 		return null;
 	}
+	*/
 
-	public JSONArray GetRestaurantsNearLoationViaYelpAPI(String userId, double lat, double lon) {
+	public JSONArray SearchRestaurants(String userId, double lat, double lon) {
 		try {
 			YelpAPI api = new YelpAPI();
 			JSONObject response = new JSONObject(
 					api.searchForBusinessesByLocation(lat, lon));
 			JSONArray array = (JSONArray) response.get("businesses");
-			if (conn == null) {
-				return null;
-			}
-			Statement stmt = conn.createStatement();
-			String sql = "";
+
 			List<JSONObject> list = new ArrayList<JSONObject>();
 			Set<String> visited = getVisitedRestaurants(userId);
 
@@ -328,13 +321,11 @@ public class DBConnection {
 				} else {
 					obj.put("is_visited", false);
 				}
-				sql = "INSERT IGNORE INTO restaurants " + "VALUES ('"
+				executeUpdateStatement("INSERT IGNORE INTO restaurants " + "VALUES ('"
 						+ businessId + "', \"" + name + "\", \"" + categories
 						+ "\", \"" + city + "\", \"" + state + "\", " + stars
 						+ ", \"" + fullAddress + "\", " + latitude + ","
-						+ longitude + ",\"" + imageUrl + "\", \"" + url + "\")";
-				System.out.println(sql);
-				stmt.executeUpdate(sql);
+						+ longitude + ",\"" + imageUrl + "\", \"" + url + "\")");
 				list.add(obj);
 			}
 			return new JSONArray(list);
@@ -347,6 +338,6 @@ public class DBConnection {
 	public static void main(String[] args) {
 		//This is for test purpose
 		DBConnection conn = new DBConnection();
-		JSONArray array = conn.GetRestaurantsNearLoationViaYelpAPI("1111", 37.38, -122.08);
+		JSONArray array = conn.SearchRestaurants("1111", 37.38, -122.08);
 	}
 }

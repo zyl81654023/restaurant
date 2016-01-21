@@ -1,2 +1,2 @@
 # restaurant
-Laioffer Project Class. A restaurant recommendation app.
+Laioffer Project Class (Chihuo). A restaurant recommendation app.
