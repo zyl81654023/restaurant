@@ -1,0 +1,104 @@
+<!doctype html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title>Restaurant Recommendation</title>
+
+  <!-- fonts -->
+  <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,300,700' rel='stylesheet' type='text/css'>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+  <!-- build:css(.tmp) styles/main.css -->
+  <link rel="stylesheet" href="styles/main.css">
+  <!-- endbuild -->
+</head>
+
+<body onload="onPageLoaded()">
+  <section class="top-header">
+    <div class="avatar">
+      <i class="fa fa-user fa-2x"></i>
+    </div>
+    <nav class="top-nav">
+      <a href="#">Home</a>
+      <a href="#">Contact</a>
+      <a href="#">About</a>
+    </nav>
+  </section>
+
+  <section class="container">
+
+    <header>
+      <p>
+        <span>Restaurant</span>
+        <br /> Recommendation
+      </p>
+    </header>
+
+    <section class="main-section">
+
+      <nav class="main-nav">
+        <a href='#' id="nearby-btn" class="main-nav-btn active" onclick="loadNearbyRestaurants()">
+          <i class="fa fa-map-marker"></i> Nearby
+        </a>
+        <a href='#' id="fav-btn" class="main-nav-btn" onclick="loadFavoriteRestaurants()">
+          <i class="fa fa-heart"></i> My Favorites
+        </a>
+        <a href='#' id="recommend-btn" class="main-nav-btn" onclick="loadRecommendedRestaurants()">
+          <i class="fa fa-thumbs-up"></i> Recommendation
+        </a>
+      </nav>
+
+      <ul class="restaurant-list">
+        <!--
+        <li class="restaurant">
+          <img src="images/restaurant-1.png" />
+          <section>
+            <title>Yam Leaf Bistro</title>
+            <p class="category">Vegetarian</p>
+            <div class="stars">
+              <p class="heart"><i class="fa fa-star"></i></p>
+              <p class="heart"><i class="fa fa-star"></i></p>
+              <p class="heart"><i class="fa fa-star"></i></p>
+            </div>
+          </section>
+          <p class="description">
+            699 Calderon Ave</br>Moutain View</br>CA
+          </p>
+          <p class="fav-link">
+            <i class="fa fa-heart"></i>
+          </p>
+        </li>
+        -->
+      </ul>
+
+    </section>
+
+    <footer>
+      <title>What We Do</title>
+      <p>
+        <i class="fa fa-quote-left"></i> Help you find the best restaurant around. <i class="fa fa-quote-right"></i>
+      </p>
+      <ul>
+        <li>
+          <p><i class="fa fa-map-o fa-2x"></i></p>
+          <p>laioffer office, CA</p>
+        </li>
+        <li>
+          <p><i class="fa fa-envelope-o fa-2x"></i></p>
+          <p>info@laioffer.com</p>
+        </li>
+        <li>
+          <p><i class="fa fa-phone fa-2x"></i></p>
+          <p>+1 800 123 456</p>
+        </li>
+      </ul>
+    </footer>
+
+  </section>
+
+  <!-- build:js(.tmp) scripts/main.js -->
+  <script src="scripts/main.js"></script>
+  <!-- endbuild -->
+</body>
+
+</html>
