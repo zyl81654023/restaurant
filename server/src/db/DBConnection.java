@@ -138,25 +138,26 @@ public class DBConnection {
 		return visitedRestaurants;
 	}
 
-	private JSONObject getRestaurantsById(String businessId) {
+	private JSONObject getRestaurantsById(String businessId, Boolean isVisited) {
 		try {
 			String sql = "SELECT * from "
 					+ "restaurants where business_id='" + businessId + "'" + " ORDER BY stars DESC";
 			ResultSet rs = executeFetchStatement(sql);
 			if (rs.next()) {
-				JSONObject obj = new JSONObject();
-				obj.put("business_id", rs.getString("business_id"));
-				obj.put("name", rs.getString("name"));
-				obj.put("stars", rs.getFloat("stars"));
-				obj.put("latitude", rs.getFloat("latitude"));
-				obj.put("longitude", rs.getFloat("longitude"));
-				obj.put("full_address", rs.getString("full_address"));
-				obj.put("city", rs.getString("city"));
-				obj.put("state", rs.getString("state"));
-				obj.put("categories",
-						DBImport.stringToJSONArray(rs.getString("categories")));
-				obj.put("image_url", rs.getString("image_url"));
-				obj.put("url", rs.getString("url"));
+				Restaurant restaurant = new Restaurant(
+						rs.getString("business_id"),
+						rs.getString("name"),
+						rs.getString("categories"),
+						rs.getString("city"),
+						rs.getString("state"),
+						rs.getFloat("stars"),
+						rs.getString("full_address"),
+						rs.getFloat("latitude"),
+						rs.getFloat("longitude"),
+						rs.getString("image_url"),
+						rs.getString("url"));
+				JSONObject obj = restaurant.toJSONObject();
+				obj.put("is_visited", isVisited);
 				return obj;
 			}
 		} catch (Exception e) { /* report an error */
@@ -217,7 +218,7 @@ public class DBConnection {
 			for (String businessId : allRestaurants) {
 				// Perform filtering
 				if (!visitedRestaurants.contains(businessId)) {
-					diff.add(getRestaurantsById(businessId));
+					diff.add(getRestaurantsById(businessId, false));
 					count++;
 					if (count >= MAX_RECOMMENDED_RESTAURANTS) {
 						break;

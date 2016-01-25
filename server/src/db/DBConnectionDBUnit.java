@@ -81,7 +81,7 @@ public class DBConnectionDBUnit extends DatabaseTestCase{
         int length = restaurants.length();
         for(int i = 0; i < length; i++){
             JSONObject restaurant = restaurants.getJSONObject(i);
-            recommend.add(restaurant.getString("business_id"));  
+            recommend.add(restaurant.getString("business_id"));
         }  
         Set<String> expected = new HashSet<String>(Arrays.asList(
         		"--jFTZmywe7StuZ2hEjxyA", "-1BzcQK-HDA6LVOThHMpsw", 

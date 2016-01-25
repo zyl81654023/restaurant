@@ -56,8 +56,7 @@ public class Restaurant {
 
 	public Restaurant(String businessId, String name, String categories,
 			String city, String state, double stars, String fullAddress,
-			double latitude, double longitude, String url, String phone,
-			String snippetText) {
+			double latitude, double longitude, String imageUrl, String url) {
 		this.businessId = businessId;
 		this.categories = categories;
 		this.name = name;
@@ -67,6 +66,7 @@ public class Restaurant {
 		this.fullAddress = fullAddress;
 		this.latitude = latitude;
 		this.longitude = longitude;
+		this.imageUrl = imageUrl;
 		this.url = url;
 	}
 	
@@ -81,7 +81,8 @@ public class Restaurant {
 			obj.put("full_address", fullAddress);
 			obj.put("city", city);
 			obj.put("state", state);
-			obj.put("categories", categories);
+			obj.put("categories", 
+					DBImport.stringToJSONArray(categories));
 			obj.put("image_url", imageUrl);
 			obj.put("url", url);
 		} catch (JSONException e) {
