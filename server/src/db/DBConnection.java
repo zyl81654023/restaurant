@@ -138,7 +138,7 @@ public class DBConnection {
 		return visitedRestaurants;
 	}
 
-	private JSONObject getRestaurantsById(String businessId, Boolean isVisited) {
+	public JSONObject getRestaurantsById(String businessId, Boolean isVisited) {
 		try {
 			String sql = "SELECT * from "
 					+ "restaurants where business_id='" + businessId + "'" + " ORDER BY stars DESC";
