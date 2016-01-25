@@ -4,6 +4,7 @@
 
 var lng = -122.08;
 var lat = 37.38;
+var projectname = '/chihuo';
 
 function onPageLoaded() {
   if (navigator.geolocation) {
@@ -30,7 +31,7 @@ function loadNearbyRestaurants() {
   activeBtn('nearby-btn');
 
   // The request parameters
-  var url = '/restaurant/restaurants';
+  var url = projectname + '/restaurants';
   var params = 'user_id=1111&lat=' + lat + '&lon=' + lng;
   var req = JSON.stringify({});
 
@@ -44,7 +45,7 @@ function loadFavoriteRestaurants() {
   activeBtn('fav-btn');
 
   // The request parameters
-  var url = '/restaurant/history';
+  var url = projectname + '/history';
   var params = 'user_id=1111';
   var req = JSON.stringify({});
 
@@ -61,7 +62,7 @@ function loadRecommendedRestaurants() {
   activeBtn('recommend-btn');
 
   // The request parameters
-  var url = '/restaurant/recommendation';
+  var url = projectname + '/recommendation';
   var params = 'user_id=1111';
   var req = JSON.stringify({});
 
@@ -87,7 +88,7 @@ function listRestaurants(restaurants) {
 
 function setFavouriteRestaurant(restaurantId) {
   // The request parameters
-  var url = '/restaurant/history';
+  var url = projectname + '/history';
   var req = JSON.stringify({
     user_id: '1111',
     visited: [restaurantId]
