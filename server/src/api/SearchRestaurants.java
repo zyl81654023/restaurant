@@ -13,15 +13,15 @@ import org.json.JSONArray;
 import db.DBConnection;
 
 /**
- * Servlet implementation class GetRestaurantsNearby
+ * Servlet implementation class SearchRestaurants
  */
-@WebServlet(description = "Get Restaurants near a location with latitude and longitude", urlPatterns = { "/restaurants" })
-public class GetRestaurantsNearby extends HttpServlet {
+@WebServlet(description = "Search Restaurants near a location with latitude and longitude", urlPatterns = { "/restaurants" })
+public class SearchRestaurants extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private static final DBConnection connection = new DBConnection();
 
 
-	public GetRestaurantsNearby() {
+	public SearchRestaurants() {
 		super();
 	}
 
@@ -39,7 +39,6 @@ public class GetRestaurantsNearby extends HttpServlet {
 			double lat = Double.parseDouble(request.getParameter("lat"));
 			double lon = Double.parseDouble(request.getParameter("lon"));
 			array = connection.SearchRestaurants(userId, lat, lon);
-			//array = connection.GetRestaurantsNearLoation(userId, lat, lon);
 		}
 		RpcParser.writeOutput(response, array);
 	}
