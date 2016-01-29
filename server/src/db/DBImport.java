@@ -7,40 +7,11 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-import org.json.JSONArray;
-import org.json.JSONException;
+import model.Restaurant;
+
 import org.json.JSONObject;
 
 public class DBImport {
-
-	public static String parseString(String str) {
-		return str.replace("\"", "\\\"").replace("/", " or ").replace("'", "");
-	}
-
-	public static String jsonArrayToString(JSONArray array) {
-		StringBuilder sb = new StringBuilder();
-		try {
-			for (int i = 0; i < array.length(); i++) {
-				String obj = (String) array.get(i);
-				sb.append(obj);
-				if (i != array.length() - 1) {
-					sb.append(", ");
-				}
-			}
-		} catch (JSONException e) {
-			e.printStackTrace();
-		}
-		return sb.toString();
-	}
-
-	public static JSONArray stringToJSONArray(String str) {
-		try {
-			return new JSONArray(str.split(","));
-		} catch (JSONException e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
 
 	public static void main(String[] args) {
 		try {
@@ -102,12 +73,12 @@ public class DBImport {
 			while ((line = reader.readLine()) != null) {
 				JSONObject restaurant = new JSONObject(line);
 				String business_id = restaurant.getString("business_id");
-				String name = parseString(restaurant.getString("name"));
-				String categories = parseString(jsonArrayToString(restaurant
+				String name = Restaurant.parseString(restaurant.getString("name"));
+				String categories = Restaurant.parseString(Restaurant.jsonArrayToString(restaurant
 						.getJSONArray("categories")));
-				String city = parseString(restaurant.getString("city"));
+				String city = Restaurant.parseString(restaurant.getString("city"));
 				String state = restaurant.getString("state");
-				String fullAddress = parseString(restaurant
+				String fullAddress = Restaurant.parseString(restaurant
 						.getString("full_address"));
 				double stars = restaurant.getDouble("stars");
 				double latitude = restaurant.getDouble("latitude");

@@ -7,9 +7,37 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import db.DBImport;
-
 public class Restaurant {
+	
+	public static String parseString(String str) {
+		return str.replace("\"", "\\\"").replace("/", " or ");
+	}
+
+	public static String jsonArrayToString(JSONArray array) {
+		StringBuilder sb = new StringBuilder();
+		try {
+			for (int i = 0; i < array.length(); i++) {
+				String obj = (String) array.get(i);
+				sb.append(obj);
+				if (i != array.length() - 1) {
+					sb.append(",");
+				}
+			}
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		return sb.toString();
+	}
+
+	public static JSONArray stringToJSONArray(String str) {
+		try {
+			return new JSONArray("[" + str + "]");
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
 	private String businessId;
 	private String name;
 	private String categories;
@@ -44,9 +72,8 @@ public class Restaurant {
 				this.longitude = coordinate.getDouble("longitude");
 				this.city = location.getString("city");
 				this.state = location.getString("state_code");
-				this.fullAddress = DBImport
-						.jsonArrayToString((JSONArray) location
-								.get("display_address"));
+				this.fullAddress = jsonArrayToString((JSONArray) location
+						.get("display_address"));
 				this.url = object.getString("url");
 			}
 		} catch (Exception e) {
@@ -81,8 +108,7 @@ public class Restaurant {
 			obj.put("full_address", fullAddress);
 			obj.put("city", city);
 			obj.put("state", state);
-			obj.put("categories", 
-					DBImport.stringToJSONArray(categories));
+			obj.put("categories", stringToJSONArray(categories));
 			obj.put("image_url", imageUrl);
 			obj.put("url", url);
 		} catch (JSONException e) {

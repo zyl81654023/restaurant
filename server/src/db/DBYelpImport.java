@@ -5,39 +5,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-
 public class DBYelpImport {
-
-	public static String parseString(String str) {
-		return str.replace("\"", "\\\"").replace("/", " or ");
-	}
-
-	public static String jsonArrayToString(JSONArray array) {
-		StringBuilder sb = new StringBuilder();
-		try {
-			for (int i = 0; i < array.length(); i++) {
-				String obj = (String) array.get(i);
-				sb.append(obj);
-				if (i != array.length() - 1) {
-					sb.append(",");
-				}
-			}
-		} catch (JSONException e) {
-			e.printStackTrace();
-		}
-		return sb.toString();
-	}
-
-	public static JSONArray stringToJSONArray(String str) {
-		try {
-			return new JSONArray("[" + str + "]");
-		} catch (JSONException e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
 
 	public static void main(String[] args) {
 		try {
