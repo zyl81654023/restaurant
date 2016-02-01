@@ -4,23 +4,27 @@
 
 var lng = -122.08;
 var lat = 37.38;
+var user_id = '1111';
 var projectname = '/chihuo';
 
 function onPageLoaded() {
   if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(onPositionUpdate);
+    navigator.geolocation.getCurrentPosition(onPositionUpdated, onLoadPositionFailed, {maximumAge: 60000});
+    showLoadingMessage('Retrieving your location...');
   } else {
-    console.warn('navigator.geolocation is not available');
-    loadNearbyRestaurants();
+	onLoadPositionFailed();
   }
 }
 
-function onPositionUpdate(position) {
+function onPositionUpdated(position) {
   lat = position.coords.latitude;
   lng = position.coords.longitude;
+  
+  loadNearbyRestaurants();
+}
 
-  console.log('current position: ' + lat + ' ' + lng);
-
+function onLoadPositionFailed() {
+  console.warn('navigator.geolocation is not available');
   loadNearbyRestaurants();
 }
 
@@ -32,13 +36,24 @@ function loadNearbyRestaurants() {
 
   // The request parameters
   var url = projectname + '/restaurants';
-  var params = 'user_id=1111&lat=' + lat + '&lon=' + lng;
+  var params = 'user_id=' + user_id + '&lat=' + lat + '&lon=' + lng;
   var req = JSON.stringify({});
 
-  ajax('get', url + '?' + params, req, function (res) {
-    var restaurants = JSON.parse(res);
-    listRestaurants(restaurants);
-  });
+  showLoadingMessage('Loading nearby restaurants...');
+  
+  ajax('get', url + '?' + params, req, 
+	function (res) {
+      var restaurants = JSON.parse(res);
+      if (!restaurants || restaurants.length === 0) {
+    	showWarningMessage('No nearby restaurant.');
+      } else {
+        listRestaurants(restaurants);
+      }
+    },
+    function () {
+      showErrorMessage('Cannot load nearby restaurants.');
+    }  
+  );
 }
 
 function loadFavoriteRestaurants() {
@@ -46,31 +61,67 @@ function loadFavoriteRestaurants() {
 
   // The request parameters
   var url = projectname + '/history';
-  var params = 'user_id=1111';
+  var params = 'user_id=' + user_id;
   var req = JSON.stringify({});
+  
+  showLoadingMessage('Loading favorite restaurants...');
 
-  ajax('get', url + '?' + params, req, function (res) {
-    var restaurants = JSON.parse(res);
-    listRestaurants(restaurants);
-  });
+  ajax('get', url + '?' + params, req, 
+    function (res) {
+      var restaurants = JSON.parse(res);
+      if (!restaurants || restaurants.length === 0) {
+    	showWarningMessage('No favorite restaurant.');
+      } else {
+    	listRestaurants(restaurants);
+      }
+    },
+    function () {
+      showErrorMessage('Cannot load favorite restaurants.');
+    }  
+  );
 }
 
 /**
- * Load favourite restaurants
+ * Load favorite restaurants
  */
 function loadRecommendedRestaurants() {
   activeBtn('recommend-btn');
 
   // The request parameters
   var url = projectname + '/recommendation';
-  var params = 'user_id=1111';
+  var params = 'user_id=' + user_id;
   var req = JSON.stringify({});
+  
+  showLoadingMessage('Loading recommended restaurants...');
 
-  ajax('get', url + '?' + params, req, function (res) {
-    var restaurants = JSON.parse(res);
-    console.dir(restaurants);
-    listRestaurants(restaurants);
-  });
+  ajax('get', url + '?' + params, req, 
+    function (res) {
+      var restaurants = JSON.parse(res);
+      if (!restaurants || restaurants.length === 0) {
+    	showWarningMessage('No recommended restaurant. Make sure you have favorites.');
+      } else {
+    	listRestaurants(restaurants);
+      }
+    },
+    function () {
+      showErrorMessage('Cannot load recommended restaurants.');
+    } 
+  );
+}
+
+function showLoadingMessage(msg) {
+  var restaurantList = document.getElementsByClassName('restaurant-list')[0];
+  restaurantList.innerHTML = '<p class="notice"><i class="fa fa-spinner fa-spin"></i> ' + msg + '</p>';
+}
+
+function showWarningMessage(msg) {
+  var restaurantList = document.getElementsByClassName('restaurant-list')[0];
+  restaurantList.innerHTML = '<p class="notice"><i class="fa fa-exclamation-triangle"></i> ' + msg + '</p>';
+}
+
+function showErrorMessage(msg) {
+  var restaurantList = document.getElementsByClassName('restaurant-list')[0];
+  restaurantList.innerHTML = '<p class="notice"><i class="fa fa-exclamation-circle"></i> ' + msg + '</p>';
 }
 
 /**
@@ -86,17 +137,26 @@ function listRestaurants(restaurants) {
   }
 }
 
-function setFavouriteRestaurant(restaurantId) {
+function changeFavoriteRestaurant(business_id) {
+  // Check whether this restaurant has been visited or not
+  var li = document.getElementById('restaurant-' + business_id);
+  var favIcon = document.getElementById('fav-icon-' + business_id);
+  var isVisited = !(li.dataset.visited === "true");
+  
   // The request parameters
   var url = projectname + '/history';
   var req = JSON.stringify({
-    user_id: '1111',
-    visited: [restaurantId]
+    user_id: user_id,
+    visited: [business_id]
   });
+  var method = isVisited ? 'post' : 'delete';
 
-  ajax('post', url, req, function (res) {
+  ajax(method, url, req, function (res) {
     var result = JSON.parse(res);
-    console.log(result);
+    if (result.status === 'OK') {
+      li.dataset.visited = isVisited;
+      favIcon.className = isVisited ? 'fa fa-heart' : 'fa fa-heart-o';
+    }
   });
 }
 
@@ -104,21 +164,33 @@ function setFavouriteRestaurant(restaurantId) {
  * Add restaurant to the list
  */
 function addRestaurant(restaurantList, restaurant) {
-  var li = $('li', {className: 'restaurant'});
+  var business_id = restaurant['business_id'];
+  
+  var li = $('li', {
+	id: 'restaurant-' + business_id,
+    className: 'restaurant'
+  });
+  
+  // set the data attribute
+  li.dataset.business = business_id;
+  li.dataset.visited = restaurant.is_visited;
 
   // image
   li.appendChild($('img', {src: restaurant.image_url}));
 
   // section
   var section = $('section');
+  
   // title
-  var title = $('title');
+  var title = $('a', {href: restaurant.url, target: '_blank'});
   title.innerHTML = restaurant.name;
   section.appendChild(title);
+  
   // category
   var category = $('p', {className: 'category'});
   category.innerHTML = restaurant.categories[0];
   section.appendChild(category);
+  
   // stars
   var stars = $('div', {className: 'stars'});
   for (var i = 0; i < restaurant.stars; i++) {
@@ -136,30 +208,37 @@ function addRestaurant(restaurantList, restaurant) {
 
   // description
   var desc = $('p', {className: 'description'});
+  
   desc.innerHTML = restaurant.full_address.replace(/,/g, '<br/>');
   li.appendChild(desc);
 
-  // fav link
+  // favorite link
   var favLink = $('p', {className: 'fav-link'});
+  
   favLink.onclick = function () {
-    setFavouriteRestaurant(restaurant.business_id);
+	changeFavoriteRestaurant(business_id);
   }
-  favLink.appendChild($('i', {className: restaurant.is_visited ? 'fa fa-heart' : 'fa fa-heart-o'}));
+  
+  favLink.appendChild($('i', {
+	id: 'fav-icon-' + business_id,
+    className: restaurant.is_visited ? 'fa fa-heart' : 'fa fa-heart-o'
+  }));
+  
   li.appendChild(favLink);
 
   restaurantList.appendChild(li);
 }
 
 function $(tag, options) {
-  var elem = document.createElement(tag);
+  var element = document.createElement(tag);
 
   for (var option in options) {
     if (options.hasOwnProperty(option)) {
-      elem[option] = options[option];
+      element[option] = options[option];
     }
   }
 
-  return elem;
+  return element;
 }
 
 function activeBtn(btnId) {
@@ -175,7 +254,7 @@ function activeBtn(btnId) {
 /**
  * Ajax helper
  */
-function ajax(method, url, data, callback) {
+function ajax(method, url, data, callback, errorHandler) {
   var xhr = new XMLHttpRequest();
 
   xhr.open(method, url, true);
@@ -188,6 +267,7 @@ function ajax(method, url, data, callback) {
 
   xhr.onerror = function () {
     console.error("The request couldn't be completed.");
+    errorHandler();
   };
 
   if (data === null) {
