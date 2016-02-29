@@ -5,7 +5,7 @@
 var lng = -122.08;
 var lat = 37.38;
 var user_id = '1111';
-var projectname = '/chihuo';
+var projectname = '/Dashi';
 
 function onPageLoaded() {
   if (navigator.geolocation) {
