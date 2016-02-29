@@ -300,7 +300,7 @@ function addRestaurant(restaurantList, restaurant) {
   li.appendChild($('img', {src: restaurant.image_url}));
 
   // section
-  var section = $('section');
+  var section = $('div');
   
   // title
   var title = $('a', {href: restaurant.url, target: '_blank'});

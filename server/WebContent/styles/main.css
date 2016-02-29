@@ -194,19 +194,19 @@ ul {
   width:  80px;
 }
 
-.restaurant section {
+.restaurant > div {
   flex:         1;
   margin-left:  10px;
   margin-right: 10px;
 }
 
-.restaurant section a {
+.restaurant > div a {
   color:           #624630;
   font-weight:     400;
   text-decoration: none;
 }
 
-.restaurant section a:hover {
+.restaurant > div a:hover {
   text-decoration: underline;
 }
 
