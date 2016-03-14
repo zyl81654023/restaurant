@@ -1,14 +1,11 @@
 package model;
 
-import java.awt.print.Printable;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import db.DBConnection;
 
 public class Restaurant {
 	
