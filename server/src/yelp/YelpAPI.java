@@ -43,6 +43,7 @@ public class YelpAPI {
 		request.addQuerystringParameter("term", DEFAULT_TERM);
 		request.addQuerystringParameter("ll", lat + "," + lon);
 		request.addQuerystringParameter("limit", String.valueOf(SEARCH_LIMIT));
+		System.out.println(request);
 		return sendRequestAndGetResponse(request);
 	}
 
