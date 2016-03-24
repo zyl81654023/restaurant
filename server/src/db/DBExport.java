@@ -13,7 +13,7 @@ public class DBExport {
 	static {
 		try {
 			Class.forName("com.mysql.jdbc.Driver").newInstance();
-			conn = DriverManager.getConnection(DBUtil.URL);
+			conn = DriverManager.getConnection(DBUtil.MYSQL_URL);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

@@ -11,6 +11,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.json.JSONArray;
 
 import db.DBConnection;
+import db.MongoDBConnection;
+import db.MySQLConnection;
 
 /**
  * Servlet implementation class RecommendRestaurants
@@ -18,7 +20,8 @@ import db.DBConnection;
 @WebServlet("/recommendation")
 public class RecommendRestaurants extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-	private static final DBConnection connection = new DBConnection();
+	private static final DBConnection connection = new MySQLConnection();
+	//private static final DBConnection connection = new MongoDBConnection();
 
 	/**
 	 * @see HttpServlet#HttpServlet()
@@ -36,7 +39,7 @@ public class RecommendRestaurants extends HttpServlet {
 		JSONArray array = null;
 		if (request.getParameterMap().containsKey("user_id")) {
 			String userId = request.getParameter("user_id");
-			array = connection.RecommendRestaurants(userId);
+			array = connection.recommendRestaurants(userId);
 		}
 		RpcParser.writeOutput(response, array);
 	}
