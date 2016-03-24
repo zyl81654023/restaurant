@@ -30,12 +30,15 @@ public class Restaurant {
 	}
 
 	public static JSONArray stringToJSONArray(String str) {
+		String[] strArray = str.split(",");
+		JSONArray ret = null;
 		try {
-			return new JSONArray("[" + str + "]");
+			ret = new JSONArray(strArray);
 		} catch (JSONException e) {
+			System.out.println("Error: stringToJSONArray "+str);
 			e.printStackTrace();
 		}
-		return null;
+		return ret;
 	}
 	
 	private String businessId;
@@ -160,5 +163,4 @@ public class Restaurant {
 	public String getUrl() {
 		return this.url;
 	}
-
 }

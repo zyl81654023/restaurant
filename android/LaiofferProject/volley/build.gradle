@@ -13,7 +13,6 @@
 // this instead:
 //     include(":volley")
 //     project(':volley').buildFileName = 'rules.gradle'
-
 buildscript {
     repositories {
         jcenter()

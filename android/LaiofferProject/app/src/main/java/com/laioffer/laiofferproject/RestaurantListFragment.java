@@ -198,7 +198,8 @@ public class RestaurantListFragment extends Fragment {
         @Override
         protected Boolean doInBackground(Void... params) {
             clock.start();
-            return dataService.setVisitedRestaurants(businessId) != null;
+            dataService.setVisitedRestaurants(businessId);
+            return true;
         }
 
         @Override
