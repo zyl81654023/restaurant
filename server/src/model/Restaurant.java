@@ -62,7 +62,7 @@ public class Restaurant {
 				for (int i = 0; i < jsonArray.length(); i++) {
 					JSONArray subArray = jsonArray.getJSONArray(i);
 					for (int j = 0; j < subArray.length(); j++) {
-						list.add(subArray.getString(j));
+						list.add(parseString(subArray.getString(j)));
 					}
 				}
 				this.categories = String.join(",", list);

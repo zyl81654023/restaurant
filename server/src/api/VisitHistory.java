@@ -16,6 +16,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import db.DBConnection;
+import db.MongoDBConnection;
+import db.MySQLConnection;
 
 /**
  * Servlet implementation class SetVisitedRestaurants
@@ -23,7 +25,8 @@ import db.DBConnection;
 @WebServlet("/history")
 public class VisitHistory extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-	private static final DBConnection connection = new DBConnection();
+	private static final DBConnection connection = new MySQLConnection();
+	//private static final DBConnection connection = new MongoDBConnection();
 
 	/**
 	 * @see HttpServlet#HttpServlet()
@@ -72,7 +75,7 @@ public class VisitHistory extends HttpServlet {
 					String businessId = (String) array.get(i);
 					visitedRestaurants.add(businessId);
 				}
-				connection.SetVisitedRestaurants(userId, visitedRestaurants);
+				connection.setVisitedRestaurants(userId, visitedRestaurants);
 				RpcParser.writeOutput(response, new JSONObject().put("status", "OK"));
 			} else {
 				RpcParser.writeOutput(response, new JSONObject().put("status", "InvalidParameter"));
@@ -94,7 +97,7 @@ public class VisitHistory extends HttpServlet {
 					String businessId = (String) array.get(i);
 					visitedRestaurants.add(businessId);
 				}
-				connection.UnsetVisitedRestaurants(userId, visitedRestaurants);
+				connection.unsetVisitedRestaurants(userId, visitedRestaurants);
 				RpcParser.writeOutput(response, new JSONObject().put("status", "OK"));
 			} else {
 				RpcParser.writeOutput(response, new JSONObject().put("status", "InvalidParameter"));

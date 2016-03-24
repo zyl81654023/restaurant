@@ -11,6 +11,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.json.JSONArray;
 
 import db.DBConnection;
+import db.MongoDBConnection;
+import db.MySQLConnection;
 
 /**
  * Servlet implementation class SearchRestaurants
@@ -18,8 +20,8 @@ import db.DBConnection;
 @WebServlet(description = "Search Restaurants near a location with latitude and longitude", urlPatterns = { "/restaurants" })
 public class SearchRestaurants extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-	private static final DBConnection connection = new DBConnection();
-
+	private static final DBConnection connection = new MySQLConnection();
+	//private static final DBConnection connection = new MongoDBConnection();
 
 	public SearchRestaurants() {
 		super();
@@ -38,7 +40,7 @@ public class SearchRestaurants extends HttpServlet {
 			String userId = request.getParameter("user_id");
 			double lat = Double.parseDouble(request.getParameter("lat"));
 			double lon = Double.parseDouble(request.getParameter("lon"));
-			array = connection.SearchRestaurants(userId, lat, lon);
+			array = connection.searchRestaurants(userId, lat, lon);
 		}
 		RpcParser.writeOutput(response, array);
 	}
