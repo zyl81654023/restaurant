@@ -4,9 +4,11 @@ import java.io.IOException;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.json.JSONArray;
 
@@ -33,6 +35,16 @@ public class SearchRestaurants extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
+
+		// allow access only if session exists
+		String user = null;
+		HttpSession session = request.getSession();
+		if (session.getAttribute("user") == null) {
+			response.setStatus(403);
+			return;
+		} else {
+			user = (String) session.getAttribute("user");
+		}
 		JSONArray array = null;
 		if (request.getParameterMap().containsKey("user_id") &&
 				request.getParameterMap().containsKey("lat") &&

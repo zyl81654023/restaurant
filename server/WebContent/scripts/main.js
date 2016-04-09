@@ -3,7 +3,7 @@
 /**
  * Variables
  */
-var projectname = '/Dashi';
+var projectname = '/chihuo';
 var user_id     = '1111';
 var lng         = -122.08;
 var lat         = 37.38;

@@ -200,4 +200,9 @@ public class MongoDBConnection implements DBConnection {
 		});
 		return set;
 	}
+
+	@Override
+	public Boolean verifyLogin(String userId, String password){
+		return true;		
+	}
 }
