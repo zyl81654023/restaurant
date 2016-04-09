@@ -205,4 +205,9 @@ public class MongoDBConnection implements DBConnection {
 	public Boolean verifyLogin(String userId, String password){
 		return true;		
 	}
+
+	@Override
+	public String getFirstLastName(String userId){
+		return "John Smith";
+	}
 }

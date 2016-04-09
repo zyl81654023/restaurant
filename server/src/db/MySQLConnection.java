@@ -271,6 +271,23 @@ public class MySQLConnection implements DBConnection {
 		return false;		
 	}
 
+	@Override
+	public String getFirstLastName(String userId){
+		String name = "";
+		try {
+			if (conn != null) {
+			String sql = "SELECT first_name, last_name from users WHERE user_id='" + userId + "'";
+			ResultSet rs = executeFetchStatement(sql);
+			if (rs.next()) {
+				name+=rs.getString("first_name")+" "+rs.getString("last_name");
+			}
+			}
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+		}
+		return name;
+	}
+
 	public static void main(String[] args) {
 		//This is for test purpose
 		MySQLConnection conn = new MySQLConnection();

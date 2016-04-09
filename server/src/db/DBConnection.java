@@ -75,9 +75,15 @@ public interface DBConnection {
 	/**
 	 * Verify if the userId matches the password. 
 	 * @param userId
-	 * @param lat
-	 * @param lon
+	 * @param password
 	 * @return
 	 */
 	public Boolean verifyLogin(String userId, String password);
+
+	/**
+	 * Get user's name for the userId. 
+	 * @param userId
+	 * @return First and Last Name
+	 */
+	public String getFirstLastName(String userId);
 }
