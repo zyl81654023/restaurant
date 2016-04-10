@@ -40,7 +40,7 @@ ul {
   border-radius: 50%;
   color:         #333C4D;
   height:        40px;
-  margin-left:   20px;
+  margin-right:  20px;
   padding-left:  9px;
   padding-top:   5px;
   width:         40px;
@@ -49,6 +49,10 @@ ul {
 /**
  * top navigation
  */
+.top-nav {
+  flex: 1;
+}
+
 .top-nav a {
   color:           #F9F9F9;
   font-weight:     400;
@@ -58,6 +62,11 @@ ul {
 
 #logout-link {
   display: none;
+}
+
+#welcome-msg {
+  display: none;
+  margin-right: 20px;
 }
 
 /**
