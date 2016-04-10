@@ -3,20 +3,89 @@
 /**
  * Variables
  */
-var projectname = '/chihuo';
-var user_id     = '1111';
-var lng         = -122.08;
-var lat         = 37.38;
+var user_id       = '';
+var user_fullname = '';
+var lng           = -122.08;
+var lat           = 37.38;
 
 /**
  * Initialize
  */
 function init() {
   // Register event listeners
-  document.getElementById('nearby-btn').addEventListener('click', loadNearbyRestaurants);
-  document.getElementById('fav-btn').addEventListener('click', loadFavoriteRestaurants);
-  document.getElementById('recommend-btn').addEventListener('click', loadRecommendedRestaurants);
+  $('login-btn').addEventListener('click', login);
+  $('nearby-btn').addEventListener('click', loadNearbyRestaurants);
+  $('fav-btn').addEventListener('click', loadFavoriteRestaurants);
+  $('recommend-btn').addEventListener('click', loadRecommendedRestaurants);
   
+  validateSession();
+}
+
+/**
+ * Session
+ */
+function validateSession() {
+  // The request parameters
+  var url = './LoginServlet';
+  var req = JSON.stringify({});
+	  
+  // display loading message
+  showLoadingMessage('Validating session...');
+
+  // make AJAX call
+  ajax('GET', url, req,
+    // session is still valid
+    function (res) {
+	  var result = JSON.parse(res);
+
+	  if (result.status === 'OK') {
+		onSessionValid(result);
+	  }
+    }
+  );
+}
+
+function onSessionValid(result) {
+  user_id = result.user_id;
+  user_fullname = result.name;
+	  
+  var loginForm = $('login-form');
+  var restaurantNav = $('restaurant-nav');
+  var restaurantList = $('restaurant-list');
+  var avatar = $('avatar');
+  var welcomeMsg = $('welcome-msg');
+  var logoutBtn = $('logout-link');
+  
+  welcomeMsg.innerHTML = 'Welcome, ' + user_fullname;
+
+  showElement(restaurantNav);
+  showElement(restaurantList);
+  showElement(avatar);
+  showElement(welcomeMsg);
+  showElement(logoutBtn, 'inline-block');
+  hideElement(loginForm);
+
+  initGeoLocation();
+}
+
+function onSessionInvalid() {
+  var loginForm = $('login-form');
+  var restaurantNav = $('restaurant-nav');
+  var restaurantList = $('restaurant-list');
+  var avatar = $('avatar');
+  var welcomeMsg = $('welcome-msg');
+  var logoutBtn = $('logout-link');
+
+  hideElement(restaurantNav);
+  hideElement(restaurantList);
+  hideElement(avatar);
+  hideElement(logoutBtn);
+  hideElement(welcomeMsg);
+  
+  showElement(loginForm);
+}
+
+function initGeoLocation() {
   if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(onPositionUpdated, onLoadPositionFailed, {maximumAge: 60000});
     showLoadingMessage('Retrieving your location...');
@@ -37,6 +106,33 @@ function onLoadPositionFailed() {
   loadNearbyRestaurants();
 }
 
+//-----------------------------------
+//  Login
+//-----------------------------------
+
+function login() {
+  var username = $('username').value;
+  var password = $('password').value;
+  password = md5(username + md5(password));
+  
+  //The request parameters
+  var url = './LoginServlet';
+  var params = 'user_id=' + username + '&password=' + password;
+  var req = JSON.stringify({});
+
+  ajax('POST', url + '?' + params, req,
+    // successful callback
+    function (res) {
+      var result = JSON.parse(res);
+      
+      // successfully logged in
+      if (result.status === 'OK') {
+    	onSessionValid(result);
+      }
+    }
+  );
+}
+
 // -----------------------------------
 //  Helper Functions
 // -----------------------------------
@@ -55,22 +151,22 @@ function activeBtn(btnId) {
   }
   
   // active the one that has id = btnId
-  var btn = document.getElementById(btnId);
+  var btn = $(btnId);
   btn.className += ' active';
 }
 
 function showLoadingMessage(msg) {
-  var restaurantList = document.getElementsByClassName('restaurant-list')[0];
+  var restaurantList = $('restaurant-list');
   restaurantList.innerHTML = '<p class="notice"><i class="fa fa-spinner fa-spin"></i> ' + msg + '</p>';
 }
 
 function showWarningMessage(msg) {
-  var restaurantList = document.getElementsByClassName('restaurant-list')[0];
+  var restaurantList = $('restaurant-list');
   restaurantList.innerHTML = '<p class="notice"><i class="fa fa-exclamation-triangle"></i> ' + msg + '</p>';
 }
 
 function showErrorMessage(msg) {
-  var restaurantList = document.getElementsByClassName('restaurant-list')[0];
+  var restaurantList = $('restaurant-list');
   restaurantList.innerHTML = '<p class="notice"><i class="fa fa-exclamation-circle"></i> ' + msg + '</p>';
 }
 
@@ -82,6 +178,10 @@ function showErrorMessage(msg) {
  * @returns
  */
 function $(tag, options) {
+  if (!options) {
+    return document.getElementById(tag);
+  }
+
   var element = document.createElement(tag);
 
   for (var option in options) {
@@ -91,6 +191,15 @@ function $(tag, options) {
   }
 
   return element;
+}
+
+function hideElement(element) {
+  element.style.display = 'none';
+}
+
+function showElement(element, style) {
+  var displayStyle = style ? style : 'block';
+  element.style.display = displayStyle;
 }
 
 /**
@@ -107,8 +216,10 @@ function ajax(method, url, data, callback, errorHandler) {
   xhr.open(method, url, true);
 
   xhr.onload = function () {
-    if (xhr.status == 200) {
+    if (xhr.status === 200) {
       callback(xhr.responseText);
+    } else if (xhr.status === 403) {
+      onSessionInvalid();
     }
   };
 
@@ -135,11 +246,11 @@ function ajax(method, url, data, callback, errorHandler) {
  * API end point: [GET] /Dashi/restaurants?user_id=1111&lat=37.38&lon=-122.08
  */
 function loadNearbyRestaurants() {
-  console.log("loadNearbyRestaurants");
+  console.log('loadNearbyRestaurants');
   activeBtn('nearby-btn');
 
   // The request parameters
-  var url = projectname + '/restaurants';
+  var url = './restaurants';
   var params = 'user_id=' + user_id + '&lat=' + lat + '&lon=' + lng;
   var req = JSON.stringify({});
   
@@ -173,7 +284,7 @@ function loadFavoriteRestaurants() {
   activeBtn('fav-btn');
 
   // The request parameters
-  var url = projectname + '/history';
+  var url = './history';
   var params = 'user_id=' + user_id;
   var req = JSON.stringify({});
   
@@ -205,7 +316,7 @@ function loadRecommendedRestaurants() {
   activeBtn('recommend-btn');
 
   // The request parameters
-  var url = projectname + '/recommendation';
+  var url = './recommendation';
   var params = 'user_id=' + user_id;
   var req = JSON.stringify({});
   
@@ -241,12 +352,12 @@ function loadRecommendedRestaurants() {
  */
 function changeFavoriteRestaurant(business_id) {
   // Check whether this restaurant has been visited or not
-  var li = document.getElementById('restaurant-' + business_id);
-  var favIcon = document.getElementById('fav-icon-' + business_id);
-  var isVisited = li.dataset.visited !== "true";
+  var li = $('restaurant-' + business_id);
+  var favIcon = $('fav-icon-' + business_id);
+  var isVisited = li.dataset.visited !== 'true';
   
   // The request parameters
-  var url = projectname + '/history';
+  var url = './history';
   var req = JSON.stringify({
     user_id: user_id,
     visited: [business_id]
@@ -276,7 +387,7 @@ function changeFavoriteRestaurant(business_id) {
  */
 function listRestaurants(restaurants) {
   // Clear the current results
-  var restaurantList = document.getElementsByClassName('restaurant-list')[0];
+  var restaurantList = $('restaurant-list');
   restaurantList.innerHTML = '';
 
   for (var i = 0; i < restaurants.length; i++) {
@@ -287,7 +398,7 @@ function listRestaurants(restaurants) {
 /**
  * Add restaurant to the list
  * 
- * @param restaurantList - The <ul class="restaurant-list"> tag
+ * @param restaurantList - The <ul id="restaurant-list"> tag
  * @param restaurant - The restaurant data (JSON object)
  */
 function addRestaurant(restaurantList, restaurant) {
@@ -307,7 +418,7 @@ function addRestaurant(restaurantList, restaurant) {
   li.appendChild($('img', {src: restaurant.image_url}));
 
   // section
-  var section = $('div');
+  var section = $('div', {});
   
   // title
   var title = $('a', {href: restaurant.url, target: '_blank', className: 'restaurant-name'});
