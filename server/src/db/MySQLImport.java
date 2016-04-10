@@ -53,6 +53,7 @@ public class MySQLImport {
 						
 			sql = "CREATE TABLE users "
 					+ "(user_id VARCHAR(255) NOT NULL, "
+					+ " password VARCHAR(255) NOT NULL, "
 					+ " first_name VARCHAR(255), last_name VARCHAR(255), "
 					+ " PRIMARY KEY ( user_id ))";
 			stmt.executeUpdate(sql);
@@ -95,7 +96,7 @@ public class MySQLImport {
 			}
 			reader.close();
 			
-			sql = "INSERT INTO users " + "VALUES (\"1111\", \"John\", \"Smith\")";
+			sql = "INSERT INTO users " + "VALUES (\"1111\", \"3229c1097c00d497a0fd282d586be050\", \"John\", \"Smith\")";
 			stmt.executeUpdate(sql);
 
 			System.out.println("Done Importing");

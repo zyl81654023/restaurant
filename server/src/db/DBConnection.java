@@ -71,5 +71,19 @@ public interface DBConnection {
 	 * @return
 	 */
 	public JSONArray searchRestaurants(String userId, double lat, double lon);
+	
+	/**
+	 * Verify if the userId matches the password. 
+	 * @param userId
+	 * @param password
+	 * @return
+	 */
+	public Boolean verifyLogin(String userId, String password);
 
+	/**
+	 * Get user's name for the userId. 
+	 * @param userId
+	 * @return First and Last Name
+	 */
+	public String getFirstLastName(String userId);
 }
