@@ -36,10 +36,10 @@ public class SearchRestaurants extends HttpServlet {
 			HttpServletResponse response) throws ServletException, IOException {
 		// allow access only if session exists
 		HttpSession session = request.getSession();
-//		if (session.getAttribute("user") == null) {
-//			response.setStatus(403);
-//			return;
-//		}
+		if (session.getAttribute("user") == null) {
+			response.setStatus(403);
+			return;
+		}
 		JSONArray array = null;
 		if (request.getParameterMap().containsKey("user_id") &&
 				request.getParameterMap().containsKey("lat") &&
