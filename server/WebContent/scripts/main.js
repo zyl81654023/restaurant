@@ -3,20 +3,64 @@
 /**
  * Variables
  */
-var projectname = '/chihuo';
-var user_id     = '1111';
+var projectname = '.';
+var user_id     = '';
 var lng         = -122.08;
 var lat         = 37.38;
+
+function validateSession() {
+  // The request parameters
+  var url = projectname + '/LoginServlet';
+  var req = JSON.stringify({});
+	  
+  // display loading message
+  showLoadingMessage('Validating session...');
+
+  // make AJAX call
+  ajax('GET', url, req,
+    // session is still valid
+    function () {
+      console.log("session is valid");
+      initGeoLocation();
+    }
+  );
+}
+
+function onSessionInvalid() {
+  var restaurantNav = document.getElementById('restaurant-nav');
+  var restaurantList = document.getElementById('restaurant-list');
+  var avatar = document.getElementById('avatar');
+  var logoutBtn = document.getElementById('logout-link');
+
+  hideElement(restaurantNav);
+  hideElement(restaurantList);
+  hideElement(avatar);
+  hideElement(logoutBtn);
+}
+
+function hideElement(element) {
+  element.style.display = "none";
+}
+
+function showElement(element, style) {
+  var displayStyle = style ? style : "block";
+  element.style.display = displayStyle;
+}
 
 /**
  * Initialize
  */
 function init() {
   // Register event listeners
+  document.getElementById('login-btn').addEventListener('click', login);
   document.getElementById('nearby-btn').addEventListener('click', loadNearbyRestaurants);
   document.getElementById('fav-btn').addEventListener('click', loadFavoriteRestaurants);
   document.getElementById('recommend-btn').addEventListener('click', loadRecommendedRestaurants);
   
+  validateSession();
+}
+
+function initGeoLocation() {
   if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(onPositionUpdated, onLoadPositionFailed, {maximumAge: 60000});
     showLoadingMessage('Retrieving your location...');
@@ -35,6 +79,45 @@ function onPositionUpdated(position) {
 function onLoadPositionFailed() {
   console.warn('navigator.geolocation is not available');
   loadNearbyRestaurants();
+}
+
+//-----------------------------------
+//  Login
+//-----------------------------------
+
+function login() {
+  var username = document.getElementById("username").value;
+  var password = document.getElementById("password").value;
+  password = md5(username + md5(password));
+  
+  //The request parameters
+  var url = projectname + '/LoginServlet';
+  var params = 'user_id=' + username + '&password=' + password;
+  var req = JSON.stringify({});
+
+  ajax('POST', url + '?' + params, req,
+    // successful callback
+    function (res) {
+      var result = JSON.parse(res);
+      if (result.status === 'OK') {
+    	user_id = username;
+        // successfully logged in
+    	var loginForm = document.getElementById("login-form");
+    	var restaurantNav = document.getElementById('restaurant-nav');
+    	var restaurantList = document.getElementById('restaurant-list');
+    	var avatar = document.getElementById('avatar');
+    	var logoutBtn = document.getElementById('logout-link');
+    	  
+    	showElement(restaurantNav);
+    	showElement(restaurantList);
+    	showElement(avatar);
+    	showElement(logoutBtn, "inline-block");
+        hideElement(loginForm);
+        
+        initGeoLocation();
+      }
+    }
+  );
 }
 
 // -----------------------------------
@@ -60,17 +143,17 @@ function activeBtn(btnId) {
 }
 
 function showLoadingMessage(msg) {
-  var restaurantList = document.getElementsByClassName('restaurant-list')[0];
+  var restaurantList = document.getElementById('restaurant-list');
   restaurantList.innerHTML = '<p class="notice"><i class="fa fa-spinner fa-spin"></i> ' + msg + '</p>';
 }
 
 function showWarningMessage(msg) {
-  var restaurantList = document.getElementsByClassName('restaurant-list')[0];
+  var restaurantList = document.getElementById('restaurant-list');
   restaurantList.innerHTML = '<p class="notice"><i class="fa fa-exclamation-triangle"></i> ' + msg + '</p>';
 }
 
 function showErrorMessage(msg) {
-  var restaurantList = document.getElementsByClassName('restaurant-list')[0];
+  var restaurantList = document.getElementById('restaurant-list');
   restaurantList.innerHTML = '<p class="notice"><i class="fa fa-exclamation-circle"></i> ' + msg + '</p>';
 }
 
@@ -109,6 +192,8 @@ function ajax(method, url, data, callback, errorHandler) {
   xhr.onload = function () {
     if (xhr.status == 200) {
       callback(xhr.responseText);
+    } else if (xhr.status == 403) {
+      onSessionInvalid();
     }
   };
 
@@ -276,7 +361,7 @@ function changeFavoriteRestaurant(business_id) {
  */
 function listRestaurants(restaurants) {
   // Clear the current results
-  var restaurantList = document.getElementsByClassName('restaurant-list')[0];
+  var restaurantList = document.getElementById('restaurant-list');
   restaurantList.innerHTML = '';
 
   for (var i = 0; i < restaurants.length; i++) {
@@ -287,7 +372,7 @@ function listRestaurants(restaurants) {
 /**
  * Add restaurant to the list
  * 
- * @param restaurantList - The <ul class="restaurant-list"> tag
+ * @param restaurantList - The <ul id="restaurant-list"> tag
  * @param restaurant - The restaurant data (JSON object)
  */
 function addRestaurant(restaurantList, restaurant) {

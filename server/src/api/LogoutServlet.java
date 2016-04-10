@@ -33,19 +33,11 @@ public class LogoutServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		// invalidate the session if exists
-		try {
-			HttpSession session = request.getSession(false);
-			if (session != null) {
-				session.invalidate();
-			}
-			JSONObject msg = new JSONObject();
-			msg.put("status", "OK");
-			RpcParser.writeOutput(response, msg);
-			response.sendRedirect("index.html");
-		} catch (JSONException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		HttpSession session = request.getSession(false);
+		if (session != null) {
+			session.invalidate();
 		}
+		response.sendRedirect("index.html");
 	}
 
 	/**
