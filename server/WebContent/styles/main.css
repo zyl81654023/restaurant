@@ -61,12 +61,17 @@ ul {
 }
 
 #logout-link {
-  display: none;
+  color:           #F9F9F9;
+  display:         none;
+  font-weight:     400;
+  padding:         0 10px;
+  text-decoration: none;
 }
 
 #welcome-msg {
-  display: none;
-  margin-right: 20px;
+  border-right:  1px solid #FFFFFF;
+  display:       none;
+  padding-right: 10px;
 }
 
 /**

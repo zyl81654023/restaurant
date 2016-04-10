@@ -56,7 +56,7 @@ function onSessionValid(result) {
   var welcomeMsg = $('welcome-msg');
   var logoutBtn = $('logout-link');
   
-  welcomeMsg.innerHTML = user_fullname;
+  welcomeMsg.innerHTML = 'Welcome, ' + user_fullname;
 
   showElement(restaurantNav);
   showElement(restaurantList);
