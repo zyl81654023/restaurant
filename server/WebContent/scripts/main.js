@@ -20,10 +20,25 @@ function validateSession() {
   ajax('GET', url, req,
     // session is still valid
     function () {
-      console.log("session is valid");
-      initGeoLocation();
+	  onSessionValid();
     }
   );
+}
+
+function onSessionValid() {
+  var loginForm = document.getElementById("login-form");
+  var restaurantNav = document.getElementById('restaurant-nav');
+  var restaurantList = document.getElementById('restaurant-list');
+  var avatar = document.getElementById('avatar');
+  var logoutBtn = document.getElementById('logout-link');
+
+  showElement(restaurantNav);
+  showElement(restaurantList);
+  showElement(avatar);
+  showElement(logoutBtn, "inline-block");
+  hideElement(loginForm);
+
+  initGeoLocation();
 }
 
 function onSessionInvalid() {
