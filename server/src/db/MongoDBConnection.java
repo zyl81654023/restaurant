@@ -202,12 +202,20 @@ public class MongoDBConnection implements DBConnection {
 	}
 
 	@Override
-	public Boolean verifyLogin(String userId, String password){
-		return true;		
+	public Boolean verifyLogin(String userId, String password) {
+		FindIterable<Document> iterable = db.getCollection("users").find(
+				new Document("user_id", userId));
+		Document document = iterable.first();
+		return document.getString("password").equals(password);
 	}
 
 	@Override
-	public String getFirstLastName(String userId){
-		return "John Smith";
+	public String getFirstLastName(String userId) {
+		FindIterable<Document> iterable = db.getCollection("users").find(
+				new Document("user_id", userId));
+		Document document = iterable.first();
+		String firstName = document.getString("first_name");
+		String lastName = document.getString("last_name");
+		return firstName + " " + lastName;
 	}
 }

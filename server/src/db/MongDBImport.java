@@ -12,8 +12,11 @@ public class MongDBImport {
 		MongoClient mongoClient = new MongoClient();
 		MongoDatabase db = mongoClient.getDatabase(DBUtil.DB_NAME);
 		db.getCollection("users").insertOne(
-				new Document().append("first_name", "John")
-						.append("last_name", "Smith").append("user_id", "1111"));//not 1111
+				new Document()
+						.append("first_name", "John")
+						.append("last_name", "Smith")
+						.append("password", "password")
+						.append("user_id", "1111"));
 		mongoClient.close();
 	}
 }
