@@ -21,8 +21,8 @@ import db.MySQLConnection;
 @WebServlet(description = "Search Restaurants near a location with latitude and longitude", urlPatterns = { "/restaurants" })
 public class SearchRestaurants extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-	//private static final DBConnection connection = new MySQLConnection();
-	private static final DBConnection connection = new MongoDBConnection();
+	private static final DBConnection connection = new MySQLConnection();
+	//private static final DBConnection connection = new MongoDBConnection();
 
 	public SearchRestaurants() {
 		super();
