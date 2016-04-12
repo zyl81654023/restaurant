@@ -16,7 +16,7 @@ public class MongDBImport {
 						.append("first_name", "John")
 						.append("last_name", "Smith")
 						.append("password", "password")
-						.append("user_id", "1111"));
+						.append("user_id", "3229c1097c00d497a0fd282d586be050"));
 		mongoClient.close();
 	}
 }

@@ -65,8 +65,10 @@ public class MongoDBConnection implements DBConnection {
 		iterable.forEach(new Block<Document>() {
 			@Override
 			public void apply(final Document document) {
-				List<String> list = (List<String>) document.get("visited");
-				set.addAll(list);
+				if (document.containsKey("visited")) {
+					List<String> list = (List<String>) document.get("visited");
+					set.addAll(list);
+				}
 			}
 		});
 		return set;
