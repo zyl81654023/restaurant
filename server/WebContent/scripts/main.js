@@ -129,8 +129,20 @@ function login() {
       if (result.status === 'OK') {
     	onSessionValid(result);
       }
+    },
+    // error
+    function () {
+      showLoginError();
     }
   );
+}
+
+function showLoginError() {
+  $('login-error').innerHTML = 'Invalid username or password';
+}
+
+function clearLoginError() {
+	$('login-error').innerHTML = '';
 }
 
 // -----------------------------------
@@ -216,11 +228,17 @@ function ajax(method, url, data, callback, errorHandler) {
   xhr.open(method, url, true);
 
   xhr.onload = function () {
-    if (xhr.status === 200) {
-      callback(xhr.responseText);
-    } else if (xhr.status === 403) {
-      onSessionInvalid();
-    }
+	switch (xhr.status) {
+	  case 200:
+		callback(xhr.responseText);
+		break;
+	  case 403:
+		onSessionInvalid();
+		break;
+	  case 401:
+		errorHandler();
+		break;
+	}
   };
 
   xhr.onerror = function () {

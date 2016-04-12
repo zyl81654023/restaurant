@@ -115,7 +115,7 @@ ul {
   margin: 0px auto;
   overflow: auto;
   padding: 40px;
-  width: 250px;
+  width: 300px;
 }
 
 #login-form label {
@@ -135,6 +135,12 @@ ul {
   float: right;
   padding: 8px 20px;
   text-align: right;
+}
+
+#login-error {
+  clear: both;
+  color: #990000;
+  padding-top: 10px;
 }
 
 /**
