@@ -79,7 +79,7 @@ public class LoginServlet extends HttpServlet {
 				msg.put("user_id", user);
 				msg.put("name", name);
 			} else {
-				msg.put("status", "Login failed");
+				response.setStatus(401);
 			}
 			RpcParser.writeOutput(response, msg);
 		} catch (JSONException e) {
