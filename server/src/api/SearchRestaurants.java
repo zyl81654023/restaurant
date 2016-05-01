@@ -21,8 +21,6 @@ import db.MySQLConnection;
 @WebServlet(description = "Search Restaurants near a location with latitude and longitude", urlPatterns = { "/restaurants" })
 public class SearchRestaurants extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-	private static final DBConnection connection = new MySQLConnection();
-	//private static final DBConnection connection = new MongoDBConnection();
 
 	public SearchRestaurants() {
 		super();
@@ -41,9 +39,11 @@ public class SearchRestaurants extends HttpServlet {
 			return;
 		}
 		JSONArray array = null;
-		if (request.getParameterMap().containsKey("user_id") &&
-				request.getParameterMap().containsKey("lat") &&
-				request.getParameterMap().containsKey("lon")) {
+		// Initialize connection in the runtime.
+		DBConnection connection = new MySQLConnection();
+		if (request.getParameterMap().containsKey("user_id")
+				&& request.getParameterMap().containsKey("lat")
+				&& request.getParameterMap().containsKey("lon")) {
 			String userId = request.getParameter("user_id");
 			double lat = Double.parseDouble(request.getParameter("lat"));
 			double lon = Double.parseDouble(request.getParameter("lon"));
