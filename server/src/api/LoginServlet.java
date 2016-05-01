@@ -71,10 +71,10 @@ public class LoginServlet extends HttpServlet {
 			if (connection.verifyLogin(user, pwd)) {
 				HttpSession session = request.getSession();
 				session.setAttribute("user", user);
-				// setting session to expire in 10 seconds
-				session.setMaxInactiveInterval(10);
+				// setting session to expire in 10 minutes
+				session.setMaxInactiveInterval(10 * 60);
 				// Get user name
-				String name = connection.getFirstLastName((String) session.getAttribute("user"));
+				String name = connection.getFirstLastName(user);
 				msg.put("status", "OK");
 				msg.put("user_id", user);
 				msg.put("name", name);
