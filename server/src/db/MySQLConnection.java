@@ -53,7 +53,7 @@ public class MySQLConnection implements DBConnection {
 		}
 		try {
 			Statement stmt = conn.createStatement();
-			System.out.println("\nDBConnection executing query:\n" + query);
+			// System.out.println("\nDBConnection executing query:\n" + query);
 			stmt.executeUpdate(query);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -66,7 +66,7 @@ public class MySQLConnection implements DBConnection {
 		}
 		try {
 			Statement stmt = conn.createStatement();
-			System.out.println("\nDBConnection executing query:\n" + query);
+			// System.out.println("\nDBConnection executing query:\n" + query);
 			return stmt.executeQuery(query);
 		} catch (Exception e) {
 			e.printStackTrace();
