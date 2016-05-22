@@ -2,7 +2,9 @@ package db;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -47,55 +49,43 @@ public class MySQLConnection implements DBConnection {
 		}
 	}
 
-	private void executeUpdateStatement(String query) {
-		if (conn == null) {
-			return;
-		}
-		try {
-			Statement stmt = conn.createStatement();
-			// System.out.println("\nDBConnection executing query:\n" + query);
-			stmt.executeUpdate(query);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
-	private ResultSet executeFetchStatement(String query) {
-		if (conn == null) {
-			return null;
-		}
-		try {
-			Statement stmt = conn.createStatement();
-			// System.out.println("\nDBConnection executing query:\n" + query);
-			return stmt.executeQuery(query);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
-
 	@Override
 	public void setVisitedRestaurants(String userId, List<String> businessIds) {
-		for (String businessId : businessIds) {
-			executeUpdateStatement("INSERT INTO history (`user_id`, `business_id`) VALUES (\""
-					+ userId + "\", \"" + businessId + "\")");
+		String query = "INSERT INTO history (user_id, business_id) VALUES (?, ?)";
+		try {
+			PreparedStatement statement = conn.prepareStatement(query);
+			for (String businessId : businessIds) {
+				statement.setString(1,  userId);
+				statement.setString(2, businessId);
+				statement.execute();
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
 		}
 	}
 
 	@Override
 	public void unsetVisitedRestaurants(String userId, List<String> businessIds) {
-		for (String businessId : businessIds) {
-			executeUpdateStatement("DELETE FROM history WHERE `user_id`=\""
-					+ userId + "\" and `business_id` = \"" + businessId + "\"");
+		String query = "DELETE FROM history WHERE user_id = ? and business_id = ?";
+		try {
+			PreparedStatement statement = conn.prepareStatement(query);
+			for (String businessId : businessIds) {
+				statement.setString(1,  userId);
+				statement.setString(2, businessId);
+				statement.execute();
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
 		}
 	}
 
 	@Override
 	public Set<String> getCategories(String businessId) {
 		try {
-			String sql = "SELECT categories from restaurants WHERE business_id='"
-					+ businessId + "'";
-			ResultSet rs = executeFetchStatement(sql);
+			String sql = "SELECT categories from restaurants WHERE business_id = ? ";
+			PreparedStatement statement = conn.prepareStatement(sql);
+			statement.setString(1, businessId);
+			ResultSet rs = statement.executeQuery();
 			if (rs.next()) {
 				Set<String> set = new HashSet<>();
 				String[] categories = rs.getString("categories").split(",");
@@ -117,9 +107,10 @@ public class MySQLConnection implements DBConnection {
 		try {
 			// if category = Chinese, categories = Chinese, Korean, Japanese,
 			// it's a match
-			String sql = "SELECT business_id from restaurants WHERE categories LIKE '%"
-					+ category + "%'";
-			ResultSet rs = executeFetchStatement(sql);
+			String sql = "SELECT business_id from restaurants WHERE categories LIKE ?";
+			PreparedStatement statement = conn.prepareStatement(sql);
+			statement.setString(1, "%" + category + "%");
+			ResultSet rs = statement.executeQuery();
 			while (rs.next()) {
 				String businessId = rs.getString("business_id");
 				set.add(businessId);
@@ -134,9 +125,10 @@ public class MySQLConnection implements DBConnection {
 	public Set<String> getVisitedRestaurants(String userId) {
 		Set<String> visitedRestaurants = new HashSet<String>();
 		try {
-			String sql = "SELECT business_id from history WHERE user_id="
-					+ userId;
-			ResultSet rs = executeFetchStatement(sql);
+			String sql = "SELECT business_id from history WHERE user_id = ?";
+			PreparedStatement statement = conn.prepareStatement(sql);
+			statement.setString(1, userId);
+			ResultSet rs = statement.executeQuery();
 			while (rs.next()) {
 				String visitedRestaurant = rs.getString("business_id");
 				visitedRestaurants.add(visitedRestaurant);
@@ -150,9 +142,10 @@ public class MySQLConnection implements DBConnection {
 	@Override
 	public JSONObject getRestaurantsById(String businessId, boolean isVisited) {
 		try {
-			String sql = "SELECT * from " + "restaurants where business_id='"
-					+ businessId + "'" + " ORDER BY stars DESC";
-			ResultSet rs = executeFetchStatement(sql);
+			String sql = "SELECT * from restaurants where business_id = ? ORDER BY stars DESC";
+			PreparedStatement statement = conn.prepareStatement(sql);
+			statement.setString(1, businessId);
+			ResultSet rs = statement.executeQuery();
 			if (rs.next()) {
 				Restaurant restaurant = new Restaurant(
 						rs.getString("business_id"), rs.getString("name"),
@@ -238,25 +231,20 @@ public class MySQLConnection implements DBConnection {
 				} else {
 					obj.put("is_visited", false);
 				}
-				executeUpdateStatement("INSERT IGNORE INTO restaurants "
-						+ "VALUES ('"
-						+ businessId
-						+ "', \""
-						+ name
-						+ "\", \""
-						+ categories
-						+ "\", \""
-						+ city
-						+ "\", \""
-						+ state
-						+ "\", "
-						+ stars
-						+ ", \""
-						+ fullAddress
-						+ "\", "
-						+ latitude
-						+ ","
-						+ longitude + ",\"" + imageUrl + "\", \"" + url + "\")");
+				String sql = "INSERT IGNORE INTO restaurants VALUES (?,?,?,?,?,?,?,?,?,?,?)";
+				PreparedStatement statement = conn.prepareStatement(sql);
+				statement.setString(1, businessId);
+				statement.setString(2, name);
+				statement.setString(3, categories);
+				statement.setString(4, city);
+				statement.setString(5, state);
+				statement.setDouble(6, stars);
+				statement.setString(7, fullAddress);
+				statement.setDouble(8, latitude);
+				statement.setDouble(9, longitude);
+				statement.setString(10, imageUrl);
+				statement.setString(11, url);
+				statement.execute();
 				list.add(obj);
 			}
 			return new JSONArray(list);
@@ -272,9 +260,11 @@ public class MySQLConnection implements DBConnection {
 			if (conn == null) {
 				return false;
 			}
-			String sql = "SELECT user_id from users WHERE user_id='" + userId
-					+ "' and password='" + password + "'";
-			ResultSet rs = executeFetchStatement(sql);
+			String sql = "SELECT user_id from users WHERE user_id = ? and password = ?";
+			PreparedStatement statement = conn.prepareStatement(sql);
+			statement.setString(1, userId);
+			statement.setString(2, password);
+			ResultSet rs = statement.executeQuery();
 			if (rs.next()) {
 				return true;
 			}
@@ -289,9 +279,9 @@ public class MySQLConnection implements DBConnection {
 		String name = "";
 		try {
 			if (conn != null) {
-				String sql = "SELECT first_name, last_name from users WHERE user_id='"
-						+ userId + "'";
-				ResultSet rs = executeFetchStatement(sql);
+				String sql = "SELECT first_name, last_name from users WHERE user_id = ?";
+				PreparedStatement statement = conn.prepareStatement(sql);
+				ResultSet rs = statement.executeQuery();
 				if (rs.next()) {
 					name += rs.getString("first_name") + " "
 							+ rs.getString("last_name");
