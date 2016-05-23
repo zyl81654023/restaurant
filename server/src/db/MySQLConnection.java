@@ -142,7 +142,7 @@ public class MySQLConnection implements DBConnection {
 	@Override
 	public JSONObject getRestaurantsById(String businessId, boolean isVisited) {
 		try {
-			String sql = "SELECT * from restaurants where business_id = ? ORDER BY stars DESC";
+			String sql = "SELECT * from restaurants where business_id = ?";
 			PreparedStatement statement = conn.prepareStatement(sql);
 			statement.setString(1, businessId);
 			ResultSet rs = statement.executeQuery();
