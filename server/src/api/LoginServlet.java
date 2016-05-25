@@ -40,7 +40,7 @@ public class LoginServlet extends HttpServlet {
 		try {
 			JSONObject msg = new JSONObject();
 			HttpSession session = request.getSession();
-			if (session.getAttribute("user") == null) {
+			if (session.getAttribute("credential") == null) {
 				response.setStatus(403);
 				msg.put("status", "Session Invalid");
 			} else {
@@ -70,7 +70,7 @@ public class LoginServlet extends HttpServlet {
 			String pwd = request.getParameter("password");
 			if (connection.verifyLogin(user, pwd)) {
 				HttpSession session = request.getSession();
-				session.setAttribute("user", user);
+				session.setAttribute("credential", pwd);
 				// setting session to expire in 10 minutes
 				session.setMaxInactiveInterval(10 * 60);
 				// Get user name

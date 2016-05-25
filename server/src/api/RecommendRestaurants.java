@@ -39,7 +39,7 @@ public class RecommendRestaurants extends HttpServlet {
 			throws ServletException, IOException {
 		// allow access only if session exists
 		HttpSession session = request.getSession();
-		if (session.getAttribute("user") == null) {
+		if (session.getAttribute("credential") == null) {
 			response.setStatus(403);
 			return;
 		}

@@ -1,7 +1,9 @@
 package db;
 
+import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
@@ -272,9 +274,16 @@ public class MySQLConnection implements DBConnection {
 			if (conn == null) {
 				return false;
 			}
-			String sql = "SELECT user_id from users WHERE user_id='" + userId
-					+ "' and password='" + password + "'";
-			ResultSet rs = executeFetchStatement(sql);
+//			String sql = "SELECT user_id from users WHERE user_id='" + userId
+//					+ "' and password='" + password + "'";
+//			System.out.println(sql);
+//			ResultSet rs = executeFetchStatement(sql);
+
+			String sql = "SELECT user_id from users WHERE user_id=? and password=?";
+			PreparedStatement pstmt = conn.prepareStatement( sql );
+			pstmt.setString( 1, userId); 
+			pstmt.setString( 2, password); 
+			ResultSet rs = pstmt.executeQuery();
 			if (rs.next()) {
 				return true;
 			}
