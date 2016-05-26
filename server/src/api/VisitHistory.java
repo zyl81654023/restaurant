@@ -10,7 +10,6 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -18,7 +17,7 @@ import org.json.JSONObject;
 
 import db.DBConnection;
 import db.MongoDBConnection;
-import db.MySQLConnection;
+import db.MySQLDBConnection;
 
 /**
  * Servlet implementation class SetVisitedRestaurants
@@ -40,16 +39,15 @@ public class VisitHistory extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		// allow access only if session exists
-		HttpSession session = request.getSession();
-		if (session.getAttribute("user") == null) {
-			response.setStatus(403);
-			return;
-		}
 		try {
 			JSONArray array = null;
 			// Initialize connection in the runtime.
-			DBConnection connection = new MySQLConnection();
+			DBConnection connection = new MySQLDBConnection();
+			// allow access only if session exists
+			if (!RpcParser.SessionValid(request, connection)) {
+				response.setStatus(403);
+				return;
+			}
 			if (request.getParameterMap().containsKey("user_id")) {
 				String userId = request.getParameter("user_id");
 				Set<String> visited_business_id = connection.getVisitedRestaurants(userId);
@@ -72,15 +70,14 @@ public class VisitHistory extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		// allow access only if session exists
-		HttpSession session = request.getSession();
-		if (session.getAttribute("user") == null) {
-			response.setStatus(403);
-			return;
-		}
 		try {
 			// Initialize connection in the runtime.
-			DBConnection connection = new MySQLConnection();
+			DBConnection connection = new MySQLDBConnection();
+			// allow access only if session exists
+			if (!RpcParser.SessionValid(request, connection)) {
+				response.setStatus(403);
+				return;
+			}
 			JSONObject input = RpcParser.parseInput(request);
 			if (input.has("user_id") && input.has("visited")) {
 				String userId = (String) input.get("user_id");
@@ -102,15 +99,14 @@ public class VisitHistory extends HttpServlet {
 
 	public void doDelete(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		// allow access only if session exists
-		HttpSession session = request.getSession();
-		if (session.getAttribute("user") == null) {
-			response.setStatus(403);
-			return;
-		}
 		try {
 			// Initialize connection in the runtime.
-			DBConnection connection = new MySQLConnection();
+			DBConnection connection = new MySQLDBConnection();
+			// allow access only if session exists
+			if (!RpcParser.SessionValid(request, connection)) {
+				response.setStatus(403);
+				return;
+			}
 			JSONObject input = RpcParser.parseInput(request);
 			if (input.has("user_id") && input.has("visited")) {
 				String userId = (String) input.get("user_id");

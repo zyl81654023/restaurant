@@ -47,7 +47,7 @@ public class DBConnectionDBUnit extends DatabaseTestCase{
 
 	@Test
 	public void testGetVisitedRestaurants() throws Exception{
-		MySQLConnection dbconn = new MySQLConnection(
+		MySQLDBConnection dbconn = new MySQLDBConnection(
 				"jdbc:mysql://localhost:3306/unittest?user=root&password=root");
 		String userId = "1111";
 		Set<String> visited = dbconn.getVisitedRestaurants(userId);
@@ -59,7 +59,7 @@ public class DBConnectionDBUnit extends DatabaseTestCase{
 	
 	@Test
 	public void testSetVisitedRestaurants() throws Exception {
-		MySQLConnection dbconn = new MySQLConnection(
+		MySQLDBConnection dbconn = new MySQLDBConnection(
 				"jdbc:mysql://localhost:3306/unittest?user=root&password=root");
 		String userId = "1111";
 		List<String> businessIds = Arrays.asList("-0HGqwlfw3I8nkJyMHxAsQ");
@@ -73,7 +73,7 @@ public class DBConnectionDBUnit extends DatabaseTestCase{
 
 	@Test
 	public void testRecommendRestaurants() throws Exception {
-		MySQLConnection dbconn = new MySQLConnection(
+		MySQLDBConnection dbconn = new MySQLDBConnection(
 				"jdbc:mysql://localhost:3306/unittest?user=root&password=root");
 		String userId = "1111";
 		JSONArray restaurants = dbconn.recommendRestaurants(userId);

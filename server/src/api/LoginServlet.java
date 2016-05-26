@@ -13,7 +13,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import db.DBConnection;
-import db.MySQLConnection;
+import db.MySQLDBConnection;
 
 /**
  * Servlet implementation class LoginServlet
@@ -21,7 +21,6 @@ import db.MySQLConnection;
 @WebServlet("/LoginServlet")
 public class LoginServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-	private static final DBConnection connection = new MySQLConnection();
 
 	/**
 	 * @see HttpServlet#HttpServlet()
@@ -39,6 +38,8 @@ public class LoginServlet extends HttpServlet {
 			throws ServletException, IOException {
 		try {
 			JSONObject msg = new JSONObject();
+			// Initialize connection in the runtime.
+			DBConnection connection = new MySQLDBConnection();
 			HttpSession session = request.getSession();
 			if (!RpcParser.SessionValid(request, connection)) {
 				response.setStatus(403);
@@ -68,6 +69,8 @@ public class LoginServlet extends HttpServlet {
 			// get request parameters for userID and password
 			String user = request.getParameter("user_id");
 			String pwd = request.getParameter("password");
+			// Initialize connection in the runtime.
+			DBConnection connection = new MySQLDBConnection();
 			if (connection.verifyLogin(user, pwd)) {
 				HttpSession session = request.getSession();
 				session.setAttribute("user", user);

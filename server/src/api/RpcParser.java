@@ -65,7 +65,7 @@ public class RpcParser {
 		String pwd = (String) session.getAttribute("password");
 		if (!connection.verifyLogin(user, pwd)) return false;
 		String user_in_url = request.getParameter("user_id");
-		if (user_in_url!=null && user_in_url!=user){
+		if (user_in_url!=null && !user_in_url.equals(user)){
 			return false;
 		}
 		return true;

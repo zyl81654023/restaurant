@@ -19,15 +19,15 @@ import org.json.JSONObject;
 
 import yelp.YelpAPI;
 
-public class MySQLConnection implements DBConnection {
+public class MySQLDBConnection implements DBConnection {
 	private Connection conn = null;
 	private static final int MAX_RECOMMENDED_RESTAURANTS = 10;
 
-	public MySQLConnection() {
+	public MySQLDBConnection() {
 		this(DBUtil.MYSQL_URL);
 	}
 
-	public MySQLConnection(String url) {
+	public MySQLDBConnection(String url) {
 		try {
 			// Forcing the class representing the MySQL driver to load and
 			// initialize.
@@ -287,6 +287,7 @@ public class MySQLConnection implements DBConnection {
 			if (conn != null) {
 				String sql = "SELECT first_name, last_name from users WHERE user_id = ?";
 				PreparedStatement statement = conn.prepareStatement(sql);
+				statement.setString(1, userId);
 				ResultSet rs = statement.executeQuery();
 				if (rs.next()) {
 					name += rs.getString("first_name") + " "
@@ -301,7 +302,7 @@ public class MySQLConnection implements DBConnection {
 
 	public static void main(String[] args) {
 		// This is for test purpose
-		MySQLConnection conn = new MySQLConnection();
+		MySQLDBConnection conn = new MySQLDBConnection();
 		JSONArray array = conn.searchRestaurants("1111", 37.38, -122.08);
 		System.out.println(array);
 	}
