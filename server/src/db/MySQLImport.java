@@ -1,15 +1,9 @@
 package db;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
-
-import model.Restaurant;
-
-import org.json.JSONObject;
 
 public class MySQLImport {
 
@@ -17,9 +11,9 @@ public class MySQLImport {
 		try {
 			Class.forName("com.mysql.jdbc.Driver").newInstance();
 			Connection conn = null;
-			String line = null;
 
 			try {
+				System.out.println("Connecting to \n" + DBUtil.MYSQL_URL);
 				conn = DriverManager.getConnection(DBUtil.MYSQL_URL);
 			} catch (SQLException e) {
 				System.out.println("SQLException " + e.getMessage());
@@ -29,8 +23,9 @@ public class MySQLImport {
 			if (conn == null) {
 				return;
 			}
-			//Step 1 Drop tables. 
 			Statement stmt = conn.createStatement();
+			
+			//Step 1. Drop tables if exist. 
 			String sql = "DROP TABLE IF EXISTS history";
 			stmt.executeUpdate(sql);
 			
@@ -39,18 +34,19 @@ public class MySQLImport {
 			
 			sql = "DROP TABLE IF EXISTS users";
 			stmt.executeUpdate(sql);
-
-			//Step 2: create tables
+			
+			//Step 2. Create new tables. 
 			sql = "CREATE TABLE restaurants "
 					+ "(business_id VARCHAR(255) NOT NULL, "
 					+ " name VARCHAR(255), " + "categories VARCHAR(255), "
 					+ "city VARCHAR(255), " + "state VARCHAR(255), "
 					+ "stars FLOAT," + "full_address VARCHAR(255), "
 					+ "latitude FLOAT, " + " longitude FLOAT, "
-					+ "image_url VARCHAR(255), " + "url VARCHAR(255), "
+					+ "image_url VARCHAR(255),"
+					+ "url VARCHAR(255),"
 					+ " PRIMARY KEY ( business_id ))";
 			stmt.executeUpdate(sql);
-						
+			
 			sql = "CREATE TABLE users "
 					+ "(user_id VARCHAR(255) NOT NULL, "
 					+ " password VARCHAR(255) NOT NULL, "
@@ -68,39 +64,26 @@ public class MySQLImport {
 					+ "FOREIGN KEY (user_id) REFERENCES users(user_id))";
 			stmt.executeUpdate(sql);
 
-			//Step 3: insert data
-			BufferedReader reader = new BufferedReader(new FileReader(
-					"../dataset/yelp_academic_dataset_business.json"));
-			while ((line = reader.readLine()) != null) {
-				JSONObject restaurant = new JSONObject(line);
-				String business_id = restaurant.getString("business_id");
-				String name = Restaurant.parseString(restaurant.getString("name"));
-				String categories = Restaurant.parseString(Restaurant.jsonArrayToString(restaurant
-						.getJSONArray("categories")));
-				String city = Restaurant.parseString(restaurant.getString("city"));
-				String state = restaurant.getString("state");
-				String fullAddress = Restaurant.parseString(restaurant
-						.getString("full_address"));
-				double stars = restaurant.getDouble("stars");
-				double latitude = restaurant.getDouble("latitude");
-				double longitude = restaurant.getDouble("longitude");
-				String imageUrl = "http://www.example.com/img.JPG";
-				String url = "http://www.yelp.com";
-				sql = "INSERT INTO restaurants " + "VALUES ('" + business_id
-						+ "', '" + name + "', '" + categories + "', '"
-						+ city + "', '" + state + "', " + stars + ", '"
-						+ fullAddress + "', " + latitude + "," + longitude
-						+ ", '" +imageUrl + "', '" + url + "')";
-				System.out.println(sql);
-				stmt.executeUpdate(sql);
-			}
-			reader.close();
-			
+			//Step 3. Insert a fake user
 			sql = "INSERT INTO users " + "VALUES (\"1111\", \"3229c1097c00d497a0fd282d586be050\", \"John\", \"Smith\")";
 			stmt.executeUpdate(sql);
 
-			System.out.println("Done Importing");
-		} catch (Exception e) {
+			/*
+			sql = "DROP TABLE IF EXISTS USER_CATEGORY_HISTORY";
+			stmt.executeUpdate(sql);
+			
+			sql = "CREATE TABLE USER_CATEGORY_HISTORY "
+					+ "(category_id bigint(20) unsigned NOT NULL AUTO_INCREMENT, "
+					+ " first_id VARCHAR(255) NOT NULL , "
+					+ " second_id VARCHAR(255) NOT NULL, "
+					+ " count bigint(20) NOT NULL, "
+					+ " PRIMARY KEY (category_id))";
+			stmt.executeUpdate(sql);
+			*/
+
+			System.out.println("Done DBYelp Importing");
+
+		} catch (Exception e) { /* report an error */
 			System.out.println(e.getMessage());
 		}
 	}

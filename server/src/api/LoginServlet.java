@@ -21,7 +21,7 @@ import db.MySQLConnection;
 @WebServlet("/LoginServlet")
 public class LoginServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-	private static final DBConnection connection = new MySQLConnection();
+	private static DBConnection connection = new MySQLConnection();
 
 	/**
 	 * @see HttpServlet#HttpServlet()
@@ -40,7 +40,7 @@ public class LoginServlet extends HttpServlet {
 		try {
 			JSONObject msg = new JSONObject();
 			HttpSession session = request.getSession();
-			if (session.getAttribute("user") == null) {
+			if (!RpcParser.sessionValid(request, connection)) {
 				response.setStatus(403);
 				msg.put("status", "Session Invalid");
 			} else {
@@ -71,6 +71,7 @@ public class LoginServlet extends HttpServlet {
 			if (connection.verifyLogin(user, pwd)) {
 				HttpSession session = request.getSession();
 				session.setAttribute("user", user);
+				session.setAttribute("password", pwd);
 				// setting session to expire in 10 minutes
 				session.setMaxInactiveInterval(10 * 60);
 				// Get user name

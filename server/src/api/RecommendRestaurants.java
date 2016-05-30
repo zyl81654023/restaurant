@@ -7,7 +7,6 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 import org.json.JSONArray;
 
@@ -37,9 +36,7 @@ public class RecommendRestaurants extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		// allow access only if session exists
-		
-		HttpSession session = request.getSession();
-		if (session.getAttribute("user") == null) {
+		if (!RpcParser.sessionValid(request, connection)) {
 			response.setStatus(403);
 			return;
 		}

@@ -14,7 +14,7 @@ public class DBConnectionTest {
 
 	@Test
 	public void testVisitedRestaurants() {
-		MySQLConnection dbconn = new MySQLConnection("jdbc:mysql://localhost:3306/unittest?user=root&password=root");
+		MySQLDBConnection dbconn = new MySQLDBConnection("jdbc:mysql://localhost:3306/unittest?user=root&password=root");
 		String userId = "1111";
 		// Remove the existing visited data from DB
 		Set<String> original_visited = dbconn.getVisitedRestaurants(userId);
