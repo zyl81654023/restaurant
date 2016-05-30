@@ -21,6 +21,7 @@ import db.MySQLConnection;
 @WebServlet("/recommendation")
 public class RecommendRestaurants extends HttpServlet {
 	private static final long serialVersionUID = 1L;
+	private static DBConnection connection = new MySQLConnection();
 
 	/**
 	 * @see HttpServlet#HttpServlet()
@@ -44,8 +45,6 @@ public class RecommendRestaurants extends HttpServlet {
 		}
 		JSONArray array = null;
 		
-		// Initialize connection in the runtime.
-		DBConnection connection = new MySQLConnection();
 		if (request.getParameterMap().containsKey("user_id")) {
 			String userId = request.getParameter("user_id");
 			array = connection.recommendRestaurants(userId);

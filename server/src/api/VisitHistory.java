@@ -26,6 +26,7 @@ import db.MySQLConnection;
 @WebServlet("/history")
 public class VisitHistory extends HttpServlet {
 	private static final long serialVersionUID = 1L;
+	private static final DBConnection connection = new MySQLConnection();
 
 	/**
 	 * @see HttpServlet#HttpServlet()
@@ -48,8 +49,6 @@ public class VisitHistory extends HttpServlet {
 		}
 		try {
 			JSONArray array = null;
-			// Initialize connection in the runtime.
-			DBConnection connection = new MySQLConnection();
 			if (request.getParameterMap().containsKey("user_id")) {
 				String userId = request.getParameter("user_id");
 				Set<String> visited_business_id = connection.getVisitedRestaurants(userId);
@@ -79,8 +78,6 @@ public class VisitHistory extends HttpServlet {
 			return;
 		}
 		try {
-			// Initialize connection in the runtime.
-			DBConnection connection = new MySQLConnection();
 			JSONObject input = RpcParser.parseInput(request);
 			if (input.has("user_id") && input.has("visited")) {
 				String userId = (String) input.get("user_id");
@@ -109,8 +106,6 @@ public class VisitHistory extends HttpServlet {
 			return;
 		}
 		try {
-			// Initialize connection in the runtime.
-			DBConnection connection = new MySQLConnection();
 			JSONObject input = RpcParser.parseInput(request);
 			if (input.has("user_id") && input.has("visited")) {
 				String userId = (String) input.get("user_id");
