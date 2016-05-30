@@ -17,7 +17,7 @@ import org.json.JSONObject;
 
 import db.DBConnection;
 import db.MongoDBConnection;
-import db.MySQLDBConnection;
+import db.MySQLConnection;
 
 /**
  * Servlet implementation class SetVisitedRestaurants
@@ -25,6 +25,7 @@ import db.MySQLDBConnection;
 @WebServlet("/history")
 public class VisitHistory extends HttpServlet {
 	private static final long serialVersionUID = 1L;
+	private static final DBConnection connection = new MySQLConnection();
 
 	/**
 	 * @see HttpServlet#HttpServlet()
@@ -41,10 +42,8 @@ public class VisitHistory extends HttpServlet {
 			throws ServletException, IOException {
 		try {
 			JSONArray array = null;
-			// Initialize connection in the runtime.
-			DBConnection connection = new MySQLDBConnection();
 			// allow access only if session exists
-			if (!RpcParser.SessionValid(request, connection)) {
+			if (!RpcParser.sessionValid(request, connection)) {
 				response.setStatus(403);
 				return;
 			}
@@ -71,10 +70,8 @@ public class VisitHistory extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		try {
-			// Initialize connection in the runtime.
-			DBConnection connection = new MySQLDBConnection();
 			// allow access only if session exists
-			if (!RpcParser.SessionValid(request, connection)) {
+			if (!RpcParser.sessionValid(request, connection)) {
 				response.setStatus(403);
 				return;
 			}
@@ -100,10 +97,8 @@ public class VisitHistory extends HttpServlet {
 	public void doDelete(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		try {
-			// Initialize connection in the runtime.
-			DBConnection connection = new MySQLDBConnection();
 			// allow access only if session exists
-			if (!RpcParser.SessionValid(request, connection)) {
+			if (!RpcParser.sessionValid(request, connection)) {
 				response.setStatus(403);
 				return;
 			}

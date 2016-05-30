@@ -58,7 +58,7 @@ public class RpcParser {
 		}	
 	}
 
-	public static Boolean SessionValid(HttpServletRequest request, DBConnection connection) {
+	public static Boolean sessionValid(HttpServletRequest request, DBConnection connection) {
 		HttpSession session = request.getSession();
 		if ( session.getAttribute("user") == null || session.getAttribute("password") == null) return false;
 		String user = (String) session.getAttribute("user");

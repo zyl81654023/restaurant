@@ -12,7 +12,7 @@ import org.json.JSONArray;
 
 import db.DBConnection;
 import db.MongoDBConnection;
-import db.MySQLDBConnection;
+import db.MySQLConnection;
 
 /**
  * Servlet implementation class SearchRestaurants
@@ -20,6 +20,7 @@ import db.MySQLDBConnection;
 @WebServlet(description = "Search Restaurants near a location with latitude and longitude", urlPatterns = { "/restaurants" })
 public class SearchRestaurants extends HttpServlet {
 	private static final long serialVersionUID = 1L;
+	private static DBConnection connection = new MySQLConnection();
 
 	public SearchRestaurants() {
 		super();
@@ -32,10 +33,8 @@ public class SearchRestaurants extends HttpServlet {
 	protected void doGet(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
 		JSONArray array = null;
-		// Initialize connection in the runtime.
-		DBConnection connection = new MySQLDBConnection();
 		// allow access only if session exists
-		if (!RpcParser.SessionValid(request, connection)) {
+		if (!RpcParser.sessionValid(request, connection)) {
 			response.setStatus(403);
 			return;
 		}
