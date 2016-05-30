@@ -17,7 +17,7 @@ import org.json.JSONObject;
 
 import db.DBConnection;
 import db.MongoDBConnection;
-import db.MySQLConnection;
+import db.MySQLDBConnection;
 
 /**
  * Servlet implementation class SetVisitedRestaurants
@@ -25,7 +25,7 @@ import db.MySQLConnection;
 @WebServlet("/history")
 public class VisitHistory extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-	private static final DBConnection connection = new MySQLConnection();
+	private static final DBConnection connection = new MySQLDBConnection();
 
 	/**
 	 * @see HttpServlet#HttpServlet()

@@ -12,7 +12,7 @@ import org.json.JSONArray;
 
 import db.DBConnection;
 import db.MongoDBConnection;
-import db.MySQLConnection;
+import db.MySQLDBConnection;
 
 /**
  * Servlet implementation class RecommendRestaurants
@@ -20,7 +20,7 @@ import db.MySQLConnection;
 @WebServlet("/recommendation")
 public class RecommendRestaurants extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-	private static DBConnection connection = new MySQLConnection();
+	private static DBConnection connection = new MySQLDBConnection();
 
 	/**
 	 * @see HttpServlet#HttpServlet()

@@ -13,7 +13,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import db.DBConnection;
-import db.MySQLConnection;
+import db.MySQLDBConnection;
 
 /**
  * Servlet implementation class LoginServlet
@@ -21,7 +21,7 @@ import db.MySQLConnection;
 @WebServlet("/LoginServlet")
 public class LoginServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-	private static DBConnection connection = new MySQLConnection();
+	private static DBConnection connection = new MySQLDBConnection();
 
 	/**
 	 * @see HttpServlet#HttpServlet()

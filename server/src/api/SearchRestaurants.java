@@ -12,7 +12,7 @@ import org.json.JSONArray;
 
 import db.DBConnection;
 import db.MongoDBConnection;
-import db.MySQLConnection;
+import db.MySQLDBConnection;
 
 /**
  * Servlet implementation class SearchRestaurants
@@ -20,7 +20,7 @@ import db.MySQLConnection;
 @WebServlet(description = "Search Restaurants near a location with latitude and longitude", urlPatterns = { "/restaurants" })
 public class SearchRestaurants extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-	private static DBConnection connection = new MySQLConnection();
+	private static DBConnection connection = new MySQLDBConnection();
 
 	public SearchRestaurants() {
 		super();
