@@ -32,12 +32,12 @@ public class SearchRestaurants extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
-		JSONArray array = null;
 		// allow access only if session exists
 		if (!RpcParser.sessionValid(request, connection)) {
 			response.setStatus(403);
 			return;
 		}
+		JSONArray array = null;
 		if (request.getParameterMap().containsKey("user_id")
 				&& request.getParameterMap().containsKey("lat")
 				&& request.getParameterMap().containsKey("lon")) {
