@@ -33,7 +33,7 @@ public class SearchRestaurants extends HttpServlet {
 	protected void doGet(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
 		// allow access only if session exists
-		if (!RpcParser.sessionValid(request, connection)) {
+		if (!RpcParser.sessionValid(request)) {
 			response.setStatus(403);
 			return;
 		}

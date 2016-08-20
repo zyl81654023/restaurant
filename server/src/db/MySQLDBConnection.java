@@ -1,12 +1,10 @@
 package db;
 
-import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -264,7 +262,8 @@ public class MySQLDBConnection implements DBConnection {
 //			String sql = "SELECT user_id from users WHERE user_id='" + userId
 //					+ "' and password='" + password + "'";
 //			System.out.println(sql);
-//			ResultSet rs = executeFetchStatement(sql);
+//			Statement stmt = conn.createStatement();
+//			ResultSet rs = stmt.executeQuery(sql);
 
 			String sql = "SELECT user_id from users WHERE user_id = ? and password = ?";
 			PreparedStatement statement = conn.prepareStatement(sql);

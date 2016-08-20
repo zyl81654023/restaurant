@@ -43,7 +43,7 @@ public class VisitHistory extends HttpServlet {
 		try {
 			JSONArray array = null;
 			// allow access only if session exists
-			if (!RpcParser.sessionValid(request, connection)) {
+			if (!RpcParser.sessionValid(request)) {
 				response.setStatus(403);
 				return;
 			}
@@ -71,7 +71,7 @@ public class VisitHistory extends HttpServlet {
 			throws ServletException, IOException {
 		try {
 			// allow access only if session exists
-			if (!RpcParser.sessionValid(request, connection)) {
+			if (!RpcParser.sessionValid(request)) {
 				response.setStatus(403);
 				return;
 			}
@@ -98,7 +98,7 @@ public class VisitHistory extends HttpServlet {
 			throws ServletException, IOException {
 		try {
 			// allow access only if session exists
-			if (!RpcParser.sessionValid(request, connection)) {
+			if (!RpcParser.sessionValid(request)) {
 				response.setStatus(403);
 				return;
 			}
