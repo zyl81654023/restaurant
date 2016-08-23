@@ -54,6 +54,7 @@ public class YelpAPI {
 		System.out.println("Querying " + request.getCompleteUrl() + " ...");
 		this.service.signRequest(this.accessToken, request);
 		Response response = request.send();
+		System.out.println(response.getBody());
 		return response.getBody();
 	}
 
