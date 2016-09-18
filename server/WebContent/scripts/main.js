@@ -447,10 +447,10 @@ function addRestaurant(restaurantList, restaurant) {
   var category = $('p', {className: 'restaurant-category'});
   category.innerHTML = 'Category: ' + restaurant.categories.join(', ');
   section.appendChild(category);
-  
+
   // stars
   var stars = $('div', {className: 'stars'});
-  for (var i = 0; i < restaurant.stars; i++) {
+  for (var i = 1; i <= restaurant.stars; i++) {
     var star = $('i', {className: 'fa fa-star'});
     stars.appendChild(star);
   }
