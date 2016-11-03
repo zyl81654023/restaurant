@@ -90,7 +90,7 @@ function initGeoLocation() {
     navigator.geolocation.getCurrentPosition(onPositionUpdated, onLoadPositionFailed, {maximumAge: 60000});
     showLoadingMessage('Retrieving your location...');
   } else {
-    onLoadPositionFailed();
+	onLoadPositionFailed();
   }
 }
 
@@ -103,7 +103,26 @@ function onPositionUpdated(position) {
 
 function onLoadPositionFailed() {
   console.warn('navigator.geolocation is not available');
-  loadNearbyRestaurants();
+  getLocationFromIP();
+}
+
+function getLocationFromIP() {
+  // Get location from http://ipinfo.io/json
+  var url = 'http://ipinfo.io/json'
+  var req = null;
+  ajax('GET', url, req,
+    function (res) {
+      var result = JSON.parse(res);
+      if ('loc' in result) {
+        var loc = result.loc.split(',');
+        lat = loc[0];
+        lng = loc[1];
+      } else {
+        console.warn('Getting location by IP failed.');
+      }
+      loadNearbyRestaurants();
+    }
+  );
 }
 
 //-----------------------------------
