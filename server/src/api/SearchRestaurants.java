@@ -7,6 +7,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.json.JSONArray;
 
@@ -33,15 +34,15 @@ public class SearchRestaurants extends HttpServlet {
 	protected void doGet(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
 		// allow access only if session exists
-		if (!RpcParser.sessionValid(request)) {
+		HttpSession session = request.getSession();
+		if ( session.getAttribute("user") == null) {
 			response.setStatus(403);
 			return;
 		}
 		JSONArray array = null;
-		if (request.getParameterMap().containsKey("user_id")
-				&& request.getParameterMap().containsKey("lat")
+		if (request.getParameterMap().containsKey("lat")
 				&& request.getParameterMap().containsKey("lon")) {
-			String userId = request.getParameter("user_id");
+			String userId = (String) session.getAttribute("user");
 			double lat = Double.parseDouble(request.getParameter("lat"));
 			double lon = Double.parseDouble(request.getParameter("lon"));
 			array = connection.searchRestaurants(userId, lat, lon);

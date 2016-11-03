@@ -40,7 +40,7 @@ public class LoginServlet extends HttpServlet {
 		try {
 			JSONObject msg = new JSONObject();
 			HttpSession session = request.getSession();
-			if (!RpcParser.sessionValid(request)) {
+			if ( session.getAttribute("user") == null) {
 				response.setStatus(403);
 				msg.put("status", "Session Invalid");
 			} else {
