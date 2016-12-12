@@ -1,2 +1,2 @@
 # restaurant
-Laioffer Project Class (Chihuo). A restaurant recommendation app.
+A restaurant recommendation web application. Using Java servlet, RESTful API and AJAX.
